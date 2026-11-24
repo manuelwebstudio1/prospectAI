@@ -1,6 +1,6 @@
 # ProspectAI — project progress
 
-Last updated: 23 Nov 2026
+Last updated: 24 Nov 2026
 
 ## Current phase
 
@@ -69,7 +69,7 @@ Last updated: 23 Nov 2026
 | `GROK_API_KEY` | Default AI | Not configured |
 | `OPENAI_API_KEY` | Alternate AI | Not configured |
 | `GOOGLE_PLACES_API_KEY` | Live discovery | Not configured |
-| `NEXT_PUBLIC_SUPABASE_URL` | Persistence | Not configured — `.data/workspace.json` |
+| `NEXT_PUBLIC_SUPABASE_URL` | Persistence | Configured locally; app reads live Supabase |
 | `RESEND_API_KEY` | Live email | Not configured |
 | `WHATSAPP_ACCESS_TOKEN` / `WHATSAPP_PHONE_NUMBER_ID` | Live WhatsApp | Not configured |
 | `MOOLRE_API_USER` / `MOOLRE_PUBLIC_KEY` / `MOOLRE_ACCOUNT_NUMBER` | Ghana checkout | Not configured |
@@ -80,11 +80,12 @@ Last updated: 23 Nov 2026
 
 | File | Purpose | Applied |
 | --- | --- | --- |
-| `supabase/migrations/00001_init.sql` | Core schema | Pending |
-| `supabase/migrations/00002_public_demo_read.sql` | Anonymous demo read | Pending |
-| `supabase/migrations/00003_outreach_metadata.sql` | Outreach metadata | Pending |
-| `supabase/migrations/00004_moolre_billing.sql` | Moolre billing columns | Pending |
-| `supabase/migrations/00005_admin_console.sql` | Admin write policies | Pending |
+| `supabase/migrations/00001_init.sql` | Core schema | Applied |
+| `supabase/migrations/00002_public_demo_read.sql` | Anonymous demo read | Applied |
+| `supabase/migrations/00003_outreach_metadata.sql` | Outreach metadata | Applied |
+| `supabase/migrations/00004_moolre_billing.sql` | Moolre billing columns | Applied |
+| `supabase/migrations/00005_admin_console.sql` | Admin write policies | Applied |
+| `supabase/migrations/00006_write_policies.sql` | Backend write RLS | Applied |
 
 ## Testing status
 
@@ -98,4 +99,4 @@ Last updated: 23 Nov 2026
 ## Next implementation steps
 
 1. Connect live credentials (Moolre, Places, Grok, Resend) when ready
-2. Apply migrations on a Supabase project
+2. Register a live account at `/register` after email confirmation is disabled for localhost
