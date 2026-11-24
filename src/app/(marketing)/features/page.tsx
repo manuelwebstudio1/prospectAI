@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageIntro } from "@/components/marketing/page-intro";
 
 export const metadata: Metadata = { title: "Features" };
 
@@ -35,15 +36,20 @@ const groups = [
 export default function FeaturesPage() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-      <h1 className="text-4xl font-bold tracking-tight">Everything you need to win website clients</h1>
-      <p className="mt-4 max-w-2xl text-slate-400">
-        ProspectAI combines discovery, research, demo generation and outreach in one workspace. Each capability is designed to be real, not decorative.
-      </p>
-      <div className="mt-12 grid gap-6 lg:grid-cols-3">
+      <PageIntro
+        eyebrow="Features"
+        title={
+          <>
+            Everything you need to win website <em className="italic">clients</em>
+          </>
+        }
+        description="ProspectAI combines discovery, research, demo generation and outreach in one workspace. Each capability is designed to be real, not decorative."
+      />
+      <div className="mt-14 grid gap-6 lg:grid-cols-3">
         {groups.map((group) => (
-          <article key={group.title} className="rounded-2xl border border-white/10 bg-[#101428] p-6">
-            <h2 className="text-lg font-semibold">{group.title}</h2>
-            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+          <article key={group.title} className="marketing-card p-6">
+            <h2 className="font-display text-2xl text-[#1c1917]">{group.title}</h2>
+            <ul className="mt-4 space-y-3 text-sm leading-6 text-[#3f3a36]">
               {group.items.map((item) => (
                 <li key={item}>• {item}</li>
               ))}

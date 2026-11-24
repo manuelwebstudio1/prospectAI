@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { CtaLink } from "@/components/marketing/cta-link";
+import { PageIntro } from "@/components/marketing/page-intro";
 
 export const metadata: Metadata = { title: "How it works" };
 
@@ -16,24 +16,29 @@ const flow = [
 export default function HowItWorksPage() {
   return (
     <section className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
-      <h1 className="text-4xl font-bold tracking-tight">How ProspectAI works</h1>
-      <p className="mt-4 text-slate-400">
-        A complete acquisition workflow — from first search to signed client.
-      </p>
-      <ol className="mt-12 space-y-6">
+      <PageIntro
+        eyebrow="How it works"
+        title={
+          <>
+            How ProspectAI <em className="italic">works</em>
+          </>
+        }
+        description="A complete acquisition workflow — from first search to signed client."
+      />
+      <ol className="mt-14 space-y-5">
         {flow.map((step, index) => (
-          <li key={step.title} className="rounded-2xl border border-white/10 bg-[#101428] p-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-300">
-              {String(index + 1).padStart(2, "0")}
-            </p>
-            <h2 className="mt-2 text-xl font-semibold">{step.title}</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">{step.body}</p>
+          <li key={step.title} className="marketing-card p-6">
+            <p className="font-display text-2xl text-[#e85a2a]">{String(index + 1).padStart(2, "0")}</p>
+            <h2 className="mt-2 text-xl font-semibold text-[#1c1917]">{step.title}</h2>
+            <p className="mt-2 text-sm leading-6 text-[#6f6a64]">{step.body}</p>
           </li>
         ))}
       </ol>
-      <Button asChild className="mt-10" size="lg">
-        <Link href="/register">Create your workspace</Link>
-      </Button>
+      <div className="mt-10 flex justify-center">
+        <CtaLink href="/register" size="lg">
+          Get Started
+        </CtaLink>
+      </div>
     </section>
   );
 }

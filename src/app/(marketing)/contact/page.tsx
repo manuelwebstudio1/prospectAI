@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { submitContactAction, type ContactState } from "./actions";
+import { PageIntro } from "@/components/marketing/page-intro";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,30 +16,39 @@ export default function ContactPage() {
 
   return (
     <section className="mx-auto max-w-xl px-4 py-20 sm:px-6">
-      <h1 className="text-4xl font-bold tracking-tight">Contact</h1>
-      <p className="mt-3 text-slate-400">
-        Partnerships, support, or a demo of ProspectAI — send a note.
-      </p>
-      <form action={action} className="mt-8 space-y-4">
+      <PageIntro
+        eyebrow="Contact"
+        title={
+          <>
+            Let’s start a <em className="italic">project</em>
+          </>
+        }
+        description="Partnerships, support, or a demo of ProspectAI — send a note."
+      />
+      <form action={action} className="marketing-card mt-12 space-y-4 p-6 sm:p-8">
         <div className="space-y-2">
-          <Label htmlFor="name" className="text-slate-200">Name</Label>
-          <Input id="name" name="name" required className="bg-white/5 text-white" />
+          <Label htmlFor="name">Name</Label>
+          <Input id="name" name="name" required className="bg-white" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-slate-200">Email</Label>
-          <Input id="email" name="email" type="email" required className="bg-white/5 text-white" />
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" name="email" type="email" required className="bg-white" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="company" className="text-slate-200">Company</Label>
-          <Input id="company" name="company" className="bg-white/5 text-white" />
+          <Label htmlFor="company">Company</Label>
+          <Input id="company" name="company" className="bg-white" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="message" className="text-slate-200">Message</Label>
-          <Textarea id="message" name="message" required className="bg-white/5 text-white" />
+          <Label htmlFor="message">Message</Label>
+          <Textarea id="message" name="message" required className="bg-white" />
         </div>
-        {state?.error ? <p className="text-sm text-red-400">{state.error}</p> : null}
-        {state?.success ? <p className="text-sm text-emerald-400">{state.success}</p> : null}
-        <Button type="submit" disabled={pending}>
+        {state?.error ? <p className="text-sm text-red-600">{state.error}</p> : null}
+        {state?.success ? <p className="text-sm text-emerald-700">{state.success}</p> : null}
+        <Button
+          type="submit"
+          disabled={pending}
+          className="h-12 rounded-full bg-[#171717] px-6 text-white hover:bg-black"
+        >
           {pending ? "Sending…" : "Send message"}
         </Button>
       </form>

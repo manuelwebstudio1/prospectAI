@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
+import { PageIntro } from "@/components/marketing/page-intro";
 
 export const metadata: Metadata = { title: "About" };
 
 export default function AboutPage() {
   return (
     <section className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
-      <h1 className="text-4xl font-bold tracking-tight">About ProspectAI</h1>
-      <div className="mt-6 space-y-5 text-base leading-7 text-slate-300">
+      <PageIntro
+        eyebrow="About"
+        title={
+          <>
+            About <em className="italic">ProspectAI</em>
+          </>
+        }
+        description="Built for people who make the web — and still spend too much of the week hunting for the next client."
+      />
+      <div className="marketing-card mt-12 space-y-5 p-8 text-base leading-7 text-[#3f3a36]">
         <p>
           ProspectAI exists because finding website clients is still mostly manual. Developers search Google Maps, guess whether a business has a site, mock something up, then write a cold email.
         </p>

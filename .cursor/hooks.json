@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File .cursor/hooks/start-watch.ps1",
+        "timeout": 20
+      }
+    ],
+    "stop": [
+      {
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File .cursor/hooks/on-stop.ps1",
+        "timeout": 90
+      }
+    ]
+  }
+}

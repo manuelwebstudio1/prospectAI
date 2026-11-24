@@ -32,7 +32,7 @@
   --radius: 0.9rem;
   --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04);
   --font-sans: var(--font-plus-jakarta);
-  --font-display: var(--font-plus-jakarta);
+  --font-display: var(--font-instrument-serif);
 }
 
 .dark {
@@ -88,6 +88,7 @@
   --color-warning: var(--warning);
   --color-info: var(--info);
   --font-sans: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), ui-serif, Georgia, "Times New Roman", serif;
   --radius-sm: calc(var(--radius) - 8px);
   --radius-md: calc(var(--radius) - 4px);
   --radius-lg: var(--radius);
@@ -141,9 +142,24 @@ body {
   box-shadow: var(--shadow-card);
 }
 
-.marketing-grid {
+.font-display {
+  font-family: var(--font-display);
+}
+
+.marketing-canvas {
+  color: #1c1917;
+  background-color: #f6f1eb;
   background-image:
-    linear-gradient(to right, rgba(109, 94, 246, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(109, 94, 246, 0.05) 1px, transparent 1px);
-  background-size: 48px 48px;
+    radial-gradient(ellipse 80% 58% at 6% -10%, rgba(242, 176, 148, 0.62), transparent 58%),
+    radial-gradient(ellipse 62% 48% at 98% 4%, rgba(236, 196, 176, 0.38), transparent 56%),
+    radial-gradient(ellipse 70% 40% at 50% 120%, rgba(255, 255, 255, 0.7), transparent 70%);
+  background-attachment: fixed;
+}
+
+.marketing-card {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(80, 50, 30, 0.08);
+  border-radius: 1.35rem;
+  box-shadow: 0 1px 2px rgba(80, 50, 30, 0.04), 0 18px 40px rgba(80, 50, 30, 0.05);
+  backdrop-filter: blur(8px);
 }
