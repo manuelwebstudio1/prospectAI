@@ -57,48 +57,6 @@ do $$ begin
   create type public.generated_website_status as enum ('queued', 'generating', 'ready', 'failed', 'expired', 'published');
 exception when duplicate_object then null; end $$;
 
--- ── Helpers ────────────────────────────────────────────────────────────────
-
-create or replace function public.set_updated_at()
-returns trigger
-language plpgsql
-as $$
-begin
-  new.updated_at = timezone('utc', now());
-  return new;
-end;
-$$;
-
-create or replace function public.is_org_member(org_id uuid)
-returns boolean
-language sql
-stable
-security definer
-set search_path = public
-as $$
-  select exists (
-    select 1
-    from public.organization_members m
-    where m.organization_id = org_id
-      and m.user_id = auth.uid()
-  );
-$$;
-
-create or replace function public.is_platform_admin()
-returns boolean
-language sql
-stable
-security definer
-set search_path = public
-as $$
-  select exists (
-    select 1
-    from public.profiles p
-    where p.id = auth.uid()
-      and p.platform_role in ('admin', 'super_admin')
-  );
-$$;
-
 -- ── Core tenancy ───────────────────────────────────────────────────────────
 
 create table if not exists public.organizations (
@@ -463,6 +421,48 @@ create table if not exists public.system_settings (
   value jsonb not null,
   updated_at timestamptz not null default timezone('utc', now())
 );
+
+-- ── Helpers (after tables so SQL functions can resolve relations) ──────────
+
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = timezone('utc', now());
+  return new;
+end;
+$$;
+
+create or replace function public.is_org_member(org_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.organization_members m
+    where m.organization_id = org_id
+      and m.user_id = auth.uid()
+  );
+$$;
+
+create or replace function public.is_platform_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.profiles p
+    where p.id = auth.uid()
+      and p.platform_role in ('admin', 'super_admin')
+  );
+$$;
 
 -- ── updated_at triggers ────────────────────────────────────────────────────
 
