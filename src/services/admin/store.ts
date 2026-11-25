@@ -11,17 +11,58 @@ import type {
 } from "@/services/workspace/types";
 import type { CurrentUser } from "@/types";
 
+export type AdminPlanMix = { slug: string; label: string; count: number };
+export type AdminRecentUser = {
+  id: string;
+  email: string;
+  full_name: string;
+  organization_name: string | null;
+  created_at: string;
+};
+export type AdminRecentPayment = {
+  id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  created_at: string;
+  organization_name: string | null;
+};
+
 export type AdminOverviewStats = {
   users: number;
+  organizations: number;
   activeSubscriptions: number;
+  trialSubscriptions: number;
   mrrGhs: number;
+  revenueGhs: number;
+  paidPayments: number;
   campaigns: number;
   businesses: number;
   demos: number;
-  payments: number;
   failedJobs: number;
+  planMix: AdminPlanMix[];
+  recentUsers: AdminRecentUser[];
+  recentPayments: AdminRecentPayment[];
   source: "local" | "supabase";
 };
+
+const emptyOverview = (source: "local" | "supabase"): AdminOverviewStats => ({
+  users: 0,
+  organizations: 0,
+  activeSubscriptions: 0,
+  trialSubscriptions: 0,
+  mrrGhs: 0,
+  revenueGhs: 0,
+  paidPayments: 0,
+  campaigns: 0,
+  businesses: 0,
+  demos: 0,
+  failedJobs: 0,
+  planMix: [],
+  recentUsers: [],
+  recentPayments: [],
+  source,
+});
 
 async function adminClient() {
   return (await createSupabaseServiceClient()) ?? (await createSupabaseServerClient());
@@ -30,64 +71,119 @@ async function adminClient() {
 export async function getAdminOverview(): Promise<AdminOverviewStats> {
   if (!isSupabaseConfigured()) {
     const workspace = await readLocalWorkspace();
-    const plan = workspace.subscription?.status === "active" ? getPlan((workspace.subscription.plan_slug as PlanSlug) || "starter") : null;
+    const plan = workspace.subscription ? getPlan((workspace.subscription.plan_slug as PlanSlug) || "starter") : null;
     const monthly =
       workspace.subscription?.status === "active" && plan
         ? workspace.subscription.billing_interval === "annual"
           ? Math.round(plan.annualGhs / 12)
           : plan.monthlyGhs
         : 0;
+    const paid = (workspace.payments ?? []).filter((item) => item.status === "paid");
     return {
+      ...emptyOverview("local"),
       users: 1,
+      organizations: 1,
       activeSubscriptions: workspace.subscription?.status === "active" ? 1 : 0,
+      trialSubscriptions: workspace.subscription?.status === "trialing" ? 1 : 0,
       mrrGhs: monthly,
+      revenueGhs: paid.reduce((sum, item) => sum + Number(item.amount ?? 0), 0),
+      paidPayments: paid.length,
       campaigns: (workspace.campaigns ?? []).length,
       businesses: (workspace.businesses ?? []).length,
       demos: (workspace.demos ?? []).length,
-      payments: (workspace.payments ?? []).length,
       failedJobs: (workspace.jobs ?? []).filter((job) => job.status === "failed").length,
-      source: "local",
+      planMix: plan ? [{ slug: plan.slug, label: plan.name, count: 1 }] : [],
     };
   }
   const supabase = await adminClient();
-  if (!supabase) {
-    return {
-      users: 0,
-      activeSubscriptions: 0,
-      mrrGhs: 0,
-      campaigns: 0,
-      businesses: 0,
-      demos: 0,
-      payments: 0,
-      failedJobs: 0,
-      source: "supabase",
-    };
-  }
-  const [users, subs, campaigns, businesses, demos, payments, failedJobs] = await Promise.all([
+  if (!supabase) return emptyOverview("supabase");
+
+  const [
+    users,
+    orgs,
+    subs,
+    campaigns,
+    businesses,
+    demos,
+    failedJobs,
+    paidRows,
+    recentProfiles,
+    recentPayRows,
+  ] = await Promise.all([
     supabase.from("profiles").select("id", { count: "exact", head: true }),
-    supabase.from("subscriptions").select("billing_interval, subscription_plans(price_monthly_ghs, price_annual_ghs)").eq("status", "active"),
+    supabase.from("organizations").select("id", { count: "exact", head: true }),
+    supabase
+      .from("subscriptions")
+      .select("status, billing_interval, subscription_plans(slug, name, price_monthly_ghs, price_annual_ghs)"),
     supabase.from("campaigns").select("id", { count: "exact", head: true }),
     supabase.from("businesses").select("id", { count: "exact", head: true }),
     supabase.from("generated_websites").select("id", { count: "exact", head: true }),
-    supabase.from("payment_transactions").select("id", { count: "exact", head: true }),
     supabase.from("campaign_jobs").select("id", { count: "exact", head: true }).eq("status", "failed"),
+    supabase.from("payment_transactions").select("amount, status").eq("status", "paid"),
+    supabase
+      .from("profiles")
+      .select("id, email, full_name, created_at, organizations(name)")
+      .order("created_at", { ascending: false })
+      .limit(8),
+    supabase
+      .from("payment_transactions")
+      .select("id, amount, currency, status, created_at, organizations(name)")
+      .order("created_at", { ascending: false })
+      .limit(8),
   ]);
-  const mrrGhs = (subs.data ?? []).reduce((sum, row) => {
+
+  const subRows = subs.data ?? [];
+  const active = subRows.filter((row) => row.status === "active");
+  const mrrGhs = active.reduce((sum, row) => {
     const plan = Array.isArray(row.subscription_plans) ? row.subscription_plans[0] : row.subscription_plans;
     if (!plan) return sum;
     const monthly = Number(plan.price_monthly_ghs ?? 0);
     const annual = Number(plan.price_annual_ghs ?? 0);
     return sum + (row.billing_interval === "annual" ? Math.round(annual / 12) : monthly);
   }, 0);
+  const mixMap = new Map<string, AdminPlanMix>();
+  for (const row of subRows) {
+    const plan = Array.isArray(row.subscription_plans) ? row.subscription_plans[0] : row.subscription_plans;
+    const slug = plan?.slug ?? "unknown";
+    const current = mixMap.get(slug) ?? { slug, label: plan?.name ?? slug, count: 0 };
+    current.count += 1;
+    mixMap.set(slug, current);
+  }
+
   return {
     users: users.count ?? 0,
-    activeSubscriptions: subs.data?.length ?? 0,
+    organizations: orgs.count ?? 0,
+    activeSubscriptions: active.length,
+    trialSubscriptions: subRows.filter((row) => row.status === "trialing").length,
     mrrGhs,
+    revenueGhs: (paidRows.data ?? []).reduce((sum, row) => sum + Number(row.amount ?? 0), 0),
+    paidPayments: paidRows.data?.length ?? 0,
     campaigns: campaigns.count ?? 0,
     businesses: businesses.count ?? 0,
     demos: demos.count ?? 0,
-    payments: payments.count ?? 0,
     failedJobs: failedJobs.count ?? 0,
+    planMix: [...mixMap.values()].sort((a, b) => b.count - a.count),
+    recentUsers: (recentProfiles.data ?? []).map((row) => {
+      const org = Array.isArray(row.organizations) ? row.organizations[0] : row.organizations;
+      return {
+        id: String(row.id),
+        email: String(row.email ?? ""),
+        full_name: String(row.full_name ?? ""),
+        organization_name: org?.name ?? null,
+        created_at: String(row.created_at ?? ""),
+      };
+    }),
+    recentPayments: (recentPayRows.data ?? []).map((row) => {
+      const org = Array.isArray(row.organizations) ? row.organizations[0] : row.organizations;
+      return {
+        id: String(row.id),
+        amount: Number(row.amount ?? 0),
+        currency: String(row.currency ?? "GHS"),
+        status: String(row.status ?? ""),
+        created_at: String(row.created_at ?? ""),
+        organization_name: org?.name ?? null,
+      };
+    }),
     source: "supabase",
   };
 }

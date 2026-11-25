@@ -5,6 +5,7 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { forgotPasswordSchema, loginSchema, registerSchema } from "@/lib/validation/auth";
 import { DEV_USER, setDevSession } from "@/lib/auth/dev-session";
+import { applyPlatformRole, isPlatformAdmin } from "@/lib/auth/roles";
 import { slugify } from "@/lib/utils";
 
 export type ActionState = { error?: string; success?: string } | null;
@@ -19,12 +20,14 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   }
 
   if (!isSupabaseConfigured()) {
+    const role = applyPlatformRole("user", parsed.data.email);
     await setDevSession({
       ...DEV_USER,
       email: parsed.data.email,
       fullName: parsed.data.email.split("@")[0].replace(/\./g, " "),
+      platformRole: role,
     });
-    redirect("/dashboard");
+    redirect(isPlatformAdmin({ platformRole: role }) ? "/admin" : "/dashboard");
   }
 
   const supabase = await createSupabaseServerClient();
@@ -33,6 +36,17 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { error: error.message };
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("platform_role, email, onboarding_completed")
+    .eq("id", user?.id ?? "")
+    .maybeSingle();
+  const role = applyPlatformRole(profile?.platform_role, profile?.email ?? parsed.data.email);
+  if (isPlatformAdmin({ platformRole: role })) redirect("/admin");
+  if (!profile?.onboarding_completed) redirect("/onboarding");
   redirect("/dashboard");
 }
 

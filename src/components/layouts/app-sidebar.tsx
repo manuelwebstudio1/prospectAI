@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, HelpCircle } from "lucide-react";
+import { ChevronDown, HelpCircle, Shield } from "lucide-react";
+import { isPlatformAdmin } from "@/lib/auth/roles";
 import { BrandLogo } from "@/components/brand/logo";
 import { workspaceNav } from "@/config/navigation";
 import { cn, initialsFromName } from "@/lib/utils";
@@ -75,6 +76,15 @@ export function AppSidebar({
       </nav>
 
       <div className="mt-auto space-y-3 px-3 pb-4">
+        {isPlatformAdmin(user) ? (
+          <Link
+            href="/admin"
+            className="flex items-center gap-2.5 rounded-xl bg-white/10 px-2.5 py-2 text-[13px] font-semibold text-white hover:bg-white/15"
+          >
+            <Shield className="h-4 w-4" />
+            Platform console
+          </Link>
+        ) : null}
         <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
           <div className="mb-2 flex items-center justify-between text-xs">
             <span className="text-sidebar-muted">Plan: {plan.planName}</span>
