@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { greetingForHour } from "@/lib/utils";
 
-export function WelcomeBanner({ name }: { name: string }) {
+export function WelcomeBanner({ name, isEmpty }: { name: string; isEmpty?: boolean }) {
   const hour = new Date().getHours();
   return (
     <section className="relative overflow-hidden rounded-[1.4rem] bg-gradient-to-r from-[#f3eaff] via-[#eef2ff] to-[#e8f1ff] p-6 sm:p-7">
@@ -12,8 +12,19 @@ export function WelcomeBanner({ name }: { name: string }) {
           <span aria-hidden>👋</span>
         </h1>
         <p className="mt-1.5 text-sm text-slate-500">
-          Discover businesses. Build relationships. Win more clients.
+          {isEmpty
+            ? "Your workspace is ready. Start by discovering businesses without websites."
+            : "Discover businesses. Build relationships. Win more clients."}
         </p>
+        {isEmpty ? (
+          <Link
+            href="/dashboard/discovery"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Find businesses
+          </Link>
+        ) : null}
       </div>
       <div className="pointer-events-none absolute right-6 top-1/2 hidden -translate-y-1/2 md:block">
         <div className="relative h-28 w-56">

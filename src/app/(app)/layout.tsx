@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-  if (!user.onboardingCompleted) redirect("/onboarding");
+  if (!user.organizationId && !user.onboardingCompleted) redirect("/onboarding");
   if ((await isUserSuspended(user.id)) && !isPlatformAdmin(user)) {
     return (
       <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center gap-3 px-4 text-center">

@@ -20,11 +20,6 @@ export async function getDashboardOverview(user: CurrentUser): Promise<Dashboard
     getSubscription(user.organizationId),
   ]);
 
-  if (businesses.length === 0 && campaigns.length === 0 && env.devPreviewData) {
-    if (subscription) fallback.plan = await planUsageFromSubscription(subscription, credits);
-    return fallback;
-  }
-
   const overview = emptyOverview(firstName);
   overview.isPreviewData = businesses.some((item) => item.is_sample) && businesses.every((item) => item.is_sample);
   overview.totalBusinesses = businesses.length;

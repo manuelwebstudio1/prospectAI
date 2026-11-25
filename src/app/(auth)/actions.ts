@@ -2,11 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { isSupabaseConfigured } from "@/lib/env";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, createSupabaseServiceClient } from "@/lib/supabase/server";
 import { forgotPasswordSchema, loginSchema, registerSchema } from "@/lib/validation/auth";
 import { DEV_USER, setDevSession } from "@/lib/auth/dev-session";
 import { applyPlatformRole, isPlatformAdmin } from "@/lib/auth/roles";
-import { slugify } from "@/lib/utils";
+import { ensureCustomerWorkspace } from "@/services/workspace/provision";
 
 export type ActionState = { error?: string; success?: string } | null;
 
@@ -39,20 +39,32 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  if (!user) return { error: "Could not start your session." };
+
   const { data: profile } = await supabase
     .from("profiles")
-    .select("platform_role, email, onboarding_completed")
-    .eq("id", user?.id ?? "")
+    .select("platform_role, email, full_name, onboarding_completed, organization_id")
+    .eq("id", user.id)
     .maybeSingle();
   const role = applyPlatformRole(profile?.platform_role, profile?.email ?? parsed.data.email);
   if (isPlatformAdmin({ platformRole: role })) redirect("/admin");
-  if (!profile?.onboarding_completed) redirect("/onboarding");
+
+  const provisioned = await ensureCustomerWorkspace({
+    userId: user.id,
+    email: profile?.email ?? user.email,
+    fullName:
+      profile?.full_name ||
+      (user.user_metadata?.full_name as string | undefined) ||
+      parsed.data.email.split("@")[0],
+  });
+  if (provisioned.error) return { error: provisioned.error };
   redirect("/dashboard");
 }
 
 export async function registerAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const parsed = registerSchema.safeParse({
     fullName: formData.get("fullName"),
+    companyName: String(formData.get("companyName") ?? "").trim() || undefined,
     email: formData.get("email"),
     password: formData.get("password"),
     confirmPassword: formData.get("confirmPassword"),
@@ -66,26 +78,59 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
       ...DEV_USER,
       email: parsed.data.email,
       fullName: parsed.data.fullName,
-      onboardingCompleted: false,
+      organizationName: parsed.data.companyName?.trim() || `${parsed.data.fullName.split(" ")[0]}'s workspace`,
+      onboardingCompleted: true,
     });
-    redirect("/onboarding");
+    redirect("/dashboard");
   }
 
   const supabase = await createSupabaseServerClient();
   if (!supabase) return { error: "Authentication is not configured." };
 
   const origin = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      data: { full_name: parsed.data.fullName },
+      data: {
+        full_name: parsed.data.fullName,
+        company_name: parsed.data.companyName ?? "",
+      },
       emailRedirectTo: `${origin}/dashboard`,
     },
   });
   if (error) return { error: error.message };
 
-  redirect("/onboarding");
+  if (!data.session) {
+    const admin = await createSupabaseServiceClient();
+    if (data.user && admin) {
+      await admin.auth.admin.updateUserById(data.user.id, { email_confirm: true });
+    }
+    const signedIn = await supabase.auth.signInWithPassword({
+      email: parsed.data.email,
+      password: parsed.data.password,
+    });
+    if (signedIn.error || !signedIn.data.user) {
+      return {
+        error: "Account created. Confirm your email, then log in to open your workspace.",
+      };
+    }
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Account created, but the session did not start. Please log in." };
+
+  const provisioned = await ensureCustomerWorkspace({
+    userId: user.id,
+    email: user.email,
+    fullName: parsed.data.fullName,
+    companyName: parsed.data.companyName,
+  });
+  if (provisioned.error) return { error: provisioned.error };
+
+  redirect("/dashboard");
 }
 
 export async function forgotPasswordAction(
@@ -149,60 +194,12 @@ export async function completeOnboardingAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "You need to be signed in." };
 
-  const organizationId = crypto.randomUUID();
-  const { error: orgError } = await supabase.from("organizations").insert({
-    id: organizationId,
-    name: payload.companyName,
-    slug: `${slugify(payload.companyName)}-${user.id.slice(0, 6)}`,
-    country: payload.country,
-    business_type: payload.businessType,
-    primary_industry: payload.primaryIndustry,
-    intended_use: payload.intendedUse,
+  const provisioned = await ensureCustomerWorkspace({
+    userId: user.id,
+    email: user.email,
+    ...payload,
   });
-
-  if (orgError) {
-    return { error: orgError.message ?? "Could not create workspace." };
-  }
-
-  await supabase.from("organization_members").insert({
-    organization_id: organizationId,
-    user_id: user.id,
-    role: "owner",
-  });
-
-  const { data: starter } = await supabase
-    .from("subscription_plans")
-    .select("id, discovery_credits, research_credits, website_generation_credits, outreach_credits")
-    .eq("slug", "starter")
-    .maybeSingle();
-
-  if (starter) {
-    const periodEnd = new Date();
-    periodEnd.setDate(periodEnd.getDate() + 14);
-    await supabase.from("subscriptions").insert({
-      organization_id: organizationId,
-      plan_id: starter.id,
-      status: "trialing",
-      trial_ends_at: periodEnd.toISOString(),
-      current_period_end: periodEnd.toISOString(),
-    });
-    await supabase.from("credit_balances").insert([
-      { organization_id: organizationId, credit_type: "discovery", remaining: starter.discovery_credits, allocated: starter.discovery_credits },
-      { organization_id: organizationId, credit_type: "research", remaining: starter.research_credits, allocated: starter.research_credits },
-      { organization_id: organizationId, credit_type: "website_generation", remaining: starter.website_generation_credits, allocated: starter.website_generation_credits },
-      { organization_id: organizationId, credit_type: "outreach", remaining: starter.outreach_credits, allocated: starter.outreach_credits },
-    ]);
-  }
-
-  await supabase
-    .from("profiles")
-    .update({
-      full_name: payload.fullName,
-      organization_id: organizationId,
-      country: payload.country,
-      onboarding_completed: true,
-    })
-    .eq("id", user.id);
+  if (provisioned.error) return { error: provisioned.error };
 
   redirect("/dashboard");
 }

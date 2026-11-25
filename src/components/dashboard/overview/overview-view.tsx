@@ -25,7 +25,7 @@ export function OverviewView({ data }: { data: DashboardOverview }) {
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_280px]">
         <div className="space-y-5">
-          <WelcomeBanner name={data.userName} />
+          <WelcomeBanner name={data.userName} isEmpty={data.totalBusinesses === 0 && !data.isPreviewData} />
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {data.kpis.map((kpi) => (
               <KpiCard key={kpi.key} kpi={kpi} />

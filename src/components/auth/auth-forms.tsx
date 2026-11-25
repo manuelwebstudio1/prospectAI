@@ -58,12 +58,18 @@ export function RegisterForm() {
   return (
     <div>
       <h1 className="text-2xl font-bold tracking-tight">Create your workspace</h1>
-      <p className="mt-1 text-sm text-muted-foreground">14-day trial. No payment required to explore the product.</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        14-day trial. After you sign up you land in your dashboard — no extra setup wall.
+      </p>
       <form action={action} className="mt-6 space-y-4">
         <DevNotice />
         <div className="space-y-2">
           <Label htmlFor="fullName">Full name</Label>
           <Input id="fullName" name="fullName" required />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="companyName">Company or agency</Label>
+          <Input id="companyName" name="companyName" placeholder="Optional — we can name it for you" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
@@ -79,7 +85,7 @@ export function RegisterForm() {
         </div>
         {state?.error ? <p className="text-sm text-red-600">{state.error}</p> : null}
         <Button type="submit" className="w-full" disabled={pending}>
-          {pending ? "Creating…" : "Create account"}
+          {pending ? "Opening workspace…" : "Create workspace"}
         </Button>
       </form>
       <p className="mt-6 text-center text-sm text-muted-foreground">
