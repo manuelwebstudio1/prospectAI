@@ -21,8 +21,8 @@ export function MarketingHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 px-3 pt-4 sm:px-6">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 rounded-full bg-white/90 px-3 py-2 shadow-[0_10px_40px_rgba(80,50,30,0.08)] ring-1 ring-black/5 backdrop-blur-xl sm:px-4 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+    <header className="marketing-canvas sticky top-0 z-50 px-3 pb-3 pt-4 sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center gap-3 rounded-full bg-white px-3 py-2 shadow-[0_10px_40px_rgba(80,50,30,0.08)] ring-1 ring-black/5 sm:px-4 lg:grid lg:grid-cols-[1fr_auto_1fr]">
         <Link href="/" aria-label="ProspectAI home" className="shrink-0 pl-1">
           <BrandLogo mark="bloom" />
         </Link>
@@ -66,7 +66,7 @@ export function MarketingHeader() {
         </button>
       </div>
       {open ? (
-        <div className="mx-auto mt-2 max-w-6xl rounded-3xl bg-white/95 p-5 shadow-[0_10px_40px_rgba(80,50,30,0.08)] ring-1 ring-black/5 backdrop-blur-xl lg:hidden">
+        <div className="mx-auto mt-2 max-w-6xl rounded-3xl bg-white p-5 shadow-[0_10px_40px_rgba(80,50,30,0.08)] ring-1 ring-black/5 lg:hidden">
           <div className="flex flex-col gap-3 text-sm text-[#3f3a36]">
             {nav.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
