@@ -79,6 +79,29 @@ export async function ensureCustomerWorkspace(
   });
   if (orgError) return { error: orgError.message };
 
+  const profileFields = {
+    email: input.email ?? null,
+    full_name: input.fullName,
+    organization_id: organizationId,
+    country,
+    onboarding_completed: true,
+  };
+  const { data: updatedProfile, error: updateError } = await supabase
+    .from("profiles")
+    .update(profileFields)
+    .eq("id", input.userId)
+    .select("id");
+  if (updateError) return { error: updateError.message };
+  if (!updatedProfile?.length) {
+    const { error: insertError } = await supabase.from("profiles").insert({
+      id: input.userId,
+      ...profileFields,
+    });
+    if (insertError && !/duplicate|unique/i.test(insertError.message)) {
+      return { error: insertError.message };
+    }
+  }
+
   const { error: memberError } = await supabase.from("organization_members").insert({
     organization_id: organizationId,
     user_id: input.userId,
@@ -131,17 +154,6 @@ export async function ensureCustomerWorkspace(
       },
     ]);
   }
-
-  const { error: profileError } = await supabase.from("profiles").upsert({
-    id: input.userId,
-    email: input.email ?? null,
-    full_name: input.fullName,
-    organization_id: organizationId,
-    country,
-    onboarding_completed: true,
-    platform_role: "user",
-  });
-  if (profileError) return { error: profileError.message };
 
   return { organizationId };
 }
