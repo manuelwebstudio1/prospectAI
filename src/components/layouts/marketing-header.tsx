@@ -39,7 +39,15 @@ export function MarketingHeader() {
                 )}
               >
                 {active ? <span className="h-1.5 w-1.5 rounded-full bg-[#e85a2a]" /> : null}
-                {item.label}
+                <span
+                  className={cn(
+                    "relative pb-0.5",
+                    active &&
+                      "after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:rounded-full after:bg-[#e85a2a]",
+                  )}
+                >
+                  {item.label}
+                </span>
               </Link>
             );
           })}
