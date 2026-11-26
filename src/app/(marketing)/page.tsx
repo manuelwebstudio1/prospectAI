@@ -46,7 +46,7 @@ export default async function LandingPage() {
             </CtaLink>
           </div>
         </div>
-        <div className="mx-auto mb-16 h-px max-w-6xl bg-[#eadfd6]" aria-hidden />
+        <div className="mx-auto mb-16 h-3.5 max-w-6xl rounded-full bg-[#d6d1cc]" aria-hidden />
       </section>
 
       <section className="px-4 pb-8 sm:px-6">
