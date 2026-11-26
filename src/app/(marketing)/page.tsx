@@ -25,21 +25,17 @@ export default async function LandingPage() {
   return (
     <>
       <section className="relative px-4 sm:px-6">
-        <div className="mx-auto flex max-w-4xl flex-col items-center pb-28 pt-16 text-center sm:pt-24 lg:pt-28">
+        <div className="mx-auto flex max-w-4xl flex-col items-center pb-16 pt-16 text-center sm:pt-24 lg:pt-28">
           <p className="mb-7 inline-flex items-center gap-2 rounded-full border border-[#eadfd6] bg-white/80 px-3.5 py-1 text-sm text-[#3f3a36] shadow-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-[#e85a2a]" />
             ProspectAI
           </p>
-          <h1 className="flex flex-col gap-2 font-display text-[2.75rem] leading-[1.12] tracking-[-0.035em] text-[#1c1917] sm:gap-3 sm:text-6xl lg:gap-4 lg:text-[5.15rem]">
-            <span>
-              <strong className="font-bold">Find</strong> businesses.
-            </span>
-            <span>
-              Build <em className="font-bold italic">websites</em>.
-            </span>
-            <span>
-              <strong className="font-bold">Win</strong> clients.
-            </span>
+          <h1 className="font-display text-[2.75rem] leading-[1.08] tracking-[-0.035em] text-[#1c1917] sm:text-6xl lg:text-[5.15rem]">
+            <strong className="font-bold">Find</strong> businesses.
+            <br />
+            Build <em className="font-bold italic">websites</em>.
+            <br />
+            <strong className="font-bold">Win</strong> clients.
           </h1>
           <p className="mt-6 max-w-xl text-base leading-7 text-[#6f6a64] sm:text-lg">
             Discover businesses without professional websites, generate personalized demos, and run outreach — without spending your week on manual prospecting.
@@ -50,6 +46,7 @@ export default async function LandingPage() {
             </CtaLink>
           </div>
         </div>
+        <div className="mx-auto mb-16 h-px max-w-6xl bg-[#eadfd6]" aria-hidden />
       </section>
 
       <section className="px-4 pb-8 sm:px-6">
