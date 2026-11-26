@@ -31,11 +31,11 @@ export default async function LandingPage() {
             ProspectAI
           </p>
           <h1 className="font-display text-[2.75rem] leading-[1.08] tracking-[-0.035em] text-[#1c1917] sm:text-6xl lg:text-[5.15rem]">
-            Find businesses.
+            <strong className="font-bold">Find</strong> businesses.
             <br />
-            Build <em className="italic">websites</em>.
+            Build <em className="font-bold italic">websites</em>.
             <br />
-            Win clients.
+            <strong className="font-bold">Win</strong> clients.
           </h1>
           <p className="mt-6 max-w-xl text-base leading-7 text-[#6f6a64] sm:text-lg">
             Discover businesses without professional websites, generate personalized demos, and run outreach — without spending your week on manual prospecting.
