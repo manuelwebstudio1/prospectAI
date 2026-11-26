@@ -1,14 +1,22 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { greetingForHour } from "@/lib/utils";
 
 export function WelcomeBanner({ name, isEmpty }: { name: string; isEmpty?: boolean }) {
-  const hour = new Date().getHours();
+  const [greeting, setGreeting] = useState("Welcome");
+
+  useEffect(() => {
+    setGreeting(greetingForHour(new Date().getHours()));
+  }, []);
+
   return (
     <section className="relative overflow-hidden rounded-[1.4rem] bg-gradient-to-r from-[#f8e6dc] via-[#f6f1eb] to-[#f3ebe3] p-6 sm:p-7">
       <div className="relative z-10 max-w-xl">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-[1.7rem]">
-          {greetingForHour(hour)}, {name}{" "}
+          {greeting}, {name}{" "}
           <span aria-hidden>👋</span>
         </h1>
         <p className="mt-1.5 text-sm text-slate-500">
