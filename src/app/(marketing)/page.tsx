@@ -25,7 +25,7 @@ export default async function LandingPage() {
   return (
     <>
       <section className="relative px-4 sm:px-6">
-        <div className="mx-auto flex max-w-4xl flex-col items-center pb-16 pt-16 text-center sm:pt-24 lg:pt-28">
+        <div className="mx-auto flex max-w-4xl flex-col items-center pb-28 pt-16 text-center sm:pt-24 lg:pt-28">
           <p className="mb-7 inline-flex items-center gap-2 rounded-full border border-[#eadfd6] bg-white/80 px-3.5 py-1 text-sm text-[#3f3a36] shadow-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-[#e85a2a]" />
             ProspectAI
@@ -46,7 +46,6 @@ export default async function LandingPage() {
             </CtaLink>
           </div>
         </div>
-        <div className="mx-auto mb-16 h-3.5 max-w-6xl rounded-full bg-[#d6d1cc]" aria-hidden />
       </section>
 
       <section className="px-4 pb-8 sm:px-6">
