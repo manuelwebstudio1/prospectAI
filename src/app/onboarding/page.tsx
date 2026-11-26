@@ -16,7 +16,7 @@ export default function OnboardingPage() {
   );
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-4 py-12">
+    <div className="marketing-canvas mx-auto flex min-h-screen max-w-lg flex-col justify-center px-4 py-12">
       <BrandLogo />
       <h1 className="mt-8 text-2xl font-bold tracking-tight">Set up your workspace</h1>
       <p className="mt-2 text-sm text-muted-foreground">

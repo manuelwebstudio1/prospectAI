@@ -22,28 +22,28 @@ export function AppSidebar({
     : 0;
 
   return (
-    <aside className="flex h-full w-[248px] shrink-0 flex-col bg-sidebar text-sidebar-foreground">
+    <aside className="flex h-full w-[248px] shrink-0 flex-col border-r border-[#eadfd6] bg-[#fbf8f4] text-[#1c1917]">
       <div className="flex items-center gap-2 px-4 py-4">
-        <BrandLogo inverted />
+        <BrandLogo />
       </div>
 
       <button
         type="button"
-        className="mx-3 mb-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-left"
+        className="mx-3 mb-4 flex items-center justify-between rounded-xl border border-[#eadfd6] bg-white px-3 py-2.5 text-left"
       >
         <span>
           <span className="block text-sm font-semibold">{user.organizationName ?? "My Workspace"}</span>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-sidebar-muted">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#9a9289]">
             {plan.planName} plan
           </span>
         </span>
-        <ChevronDown className="h-4 w-4 text-sidebar-muted" />
+        <ChevronDown className="h-4 w-4 text-[#9a9289]" />
       </button>
 
       <nav className="flex-1 overflow-y-auto px-3 pb-4">
         {workspaceNav.map((section) => (
           <div key={section.id} className="mb-5">
-            <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-sidebar-muted">
+            <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9a9289]">
               {section.title}
             </p>
             <ul className="space-y-0.5">
@@ -60,8 +60,8 @@ export function AppSidebar({
                       className={cn(
                         "flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[13px] font-medium transition-colors",
                         active
-                          ? "bg-primary text-white shadow-sm"
-                          : "text-slate-300 hover:bg-white/5 hover:text-white",
+                          ? "bg-[#e85a2a] text-white shadow-sm"
+                          : "text-[#3f3a36] hover:bg-[#f3ebe3] hover:text-[#1c1917]",
                       )}
                     >
                       <Icon className="h-4 w-4" />
@@ -79,43 +79,43 @@ export function AppSidebar({
         {isPlatformAdmin(user) ? (
           <Link
             href="/admin"
-            className="flex items-center gap-2.5 rounded-xl bg-white/10 px-2.5 py-2 text-[13px] font-semibold text-white hover:bg-white/15"
+            className="flex items-center gap-2.5 rounded-xl bg-[#f3ebe3] px-2.5 py-2 text-[13px] font-semibold text-[#1c1917] hover:bg-[#eadfd6]"
           >
-            <Shield className="h-4 w-4" />
+            <Shield className="h-4 w-4 text-[#e85a2a]" />
             Platform console
           </Link>
         ) : null}
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+        <div className="rounded-2xl border border-[#eadfd6] bg-white p-3">
           <div className="mb-2 flex items-center justify-between text-xs">
-            <span className="text-sidebar-muted">Plan: {plan.planName}</span>
-            <Link href="/dashboard/billing" className="font-semibold text-violet-300 hover:text-white">
+            <span className="text-[#9a9289]">Plan: {plan.planName}</span>
+            <Link href="/dashboard/billing" className="font-semibold text-[#e85a2a] hover:text-[#cf4f24]">
               Upgrade
             </Link>
           </div>
-          <p className="text-[11px] text-sidebar-muted">
+          <p className="text-[11px] text-[#9a9289]">
             Credits {plan.creditsUsed.toLocaleString()} / {plan.creditsTotal.toLocaleString()}
           </p>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full rounded-full bg-primary" style={{ width: `${creditPct}%` }} />
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#f3ebe3]">
+            <div className="h-full rounded-full bg-[#e85a2a]" style={{ width: `${creditPct}%` }} />
           </div>
-          <p className="mt-1 text-right text-[11px] text-sidebar-muted">{creditPct}%</p>
+          <p className="mt-1 text-right text-[11px] text-[#9a9289]">{creditPct}%</p>
         </div>
 
         <Link
           href="/contact"
-          className="flex items-center gap-2 rounded-xl px-2.5 py-2 text-[13px] text-slate-300 hover:bg-white/5"
+          className="flex items-center gap-2 rounded-xl px-2.5 py-2 text-[13px] text-[#3f3a36] hover:bg-[#f3ebe3]"
         >
           <HelpCircle className="h-4 w-4" />
           Help Centre
         </Link>
 
-        <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 px-2.5 py-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold">
+        <div className="flex items-center gap-2.5 rounded-xl border border-[#eadfd6] bg-white px-2.5 py-2">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#e85a2a] text-xs font-bold text-white">
             {initialsFromName(user.fullName)}
           </span>
           <span className="min-w-0">
             <span className="block truncate text-sm font-semibold">{user.fullName}</span>
-            <span className="block truncate text-[11px] text-sidebar-muted">{user.email}</span>
+            <span className="block truncate text-[11px] text-[#9a9289]">{user.email}</span>
           </span>
         </div>
       </div>

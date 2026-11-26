@@ -44,7 +44,7 @@ export function QuickActionsCard() {
               href={action.href}
               className="flex items-center gap-3 rounded-xl border border-transparent px-2 py-2.5 transition-colors hover:border-border hover:bg-muted/60"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-primary">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f8e6dc] text-primary">
                 {action.label === "Create Campaign" ? <Plus className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
               </span>
               <span>
@@ -139,7 +139,7 @@ export function RecentDiscoveries({ items }: { items: RecentDiscovery[] }) {
                   <tr key={item.id} className="border-t">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2.5">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-50 text-primary">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#f8e6dc] text-primary">
                           <Icon className="h-4 w-4" />
                         </span>
                         <span>

@@ -24,7 +24,7 @@ export function MarketingHeader() {
     <header className="marketing-canvas sticky top-0 z-50 px-3 pb-3 pt-4 sm:px-6">
       <div className="mx-auto flex max-w-6xl items-center gap-3 rounded-full bg-white px-3 py-2 shadow-[0_10px_40px_rgba(80,50,30,0.08)] ring-1 ring-black/5 sm:px-4 lg:grid lg:grid-cols-[1fr_auto_1fr]">
         <Link href="/" aria-label="ProspectAI home" className="shrink-0 pl-1">
-          <BrandLogo mark="bloom" />
+          <BrandLogo />
         </Link>
         <nav className="hidden items-center justify-center gap-7 text-[13.5px] text-[#3f3a36] lg:flex">
           {nav.map((item) => {

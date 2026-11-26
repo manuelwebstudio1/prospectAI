@@ -26,7 +26,7 @@ export function BrandLogo({
   className,
   inverted = false,
   withWordmark = true,
-  mark = "letter",
+  mark = "bloom",
 }: {
   className?: string;
   inverted?: boolean;
@@ -35,19 +35,18 @@ export function BrandLogo({
 }) {
   return (
     <div className={cn("flex items-center gap-2.5", className)}>
-      {mark === "bloom" ? (
-        <BloomMark />
-      ) : (
-        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#8b7cff] to-[#5b4ce8] text-sm font-bold text-white shadow-sm">
+      {mark === "letter" ? (
+        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#e85a2a] text-sm font-bold text-white shadow-sm">
           P
         </span>
+      ) : (
+        <BloomMark />
       )}
       {withWordmark ? (
         <span
           className={cn(
-            "text-[15px] tracking-tight",
-            mark === "bloom" ? "font-semibold" : "font-bold",
-            inverted ? "text-white" : "text-foreground",
+            "text-[15px] font-semibold tracking-tight",
+            inverted ? "text-white" : "text-[#1c1917]",
           )}
         >
           ProspectAI

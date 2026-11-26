@@ -5,7 +5,7 @@ import { greetingForHour } from "@/lib/utils";
 export function WelcomeBanner({ name, isEmpty }: { name: string; isEmpty?: boolean }) {
   const hour = new Date().getHours();
   return (
-    <section className="relative overflow-hidden rounded-[1.4rem] bg-gradient-to-r from-[#f3eaff] via-[#eef2ff] to-[#e8f1ff] p-6 sm:p-7">
+    <section className="relative overflow-hidden rounded-[1.4rem] bg-gradient-to-r from-[#f8e6dc] via-[#f6f1eb] to-[#f3ebe3] p-6 sm:p-7">
       <div className="relative z-10 max-w-xl">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-[1.7rem]">
           {greetingForHour(hour)}, {name}{" "}
@@ -28,8 +28,8 @@ export function WelcomeBanner({ name, isEmpty }: { name: string; isEmpty?: boole
       </div>
       <div className="pointer-events-none absolute right-6 top-1/2 hidden -translate-y-1/2 md:block">
         <div className="relative h-28 w-56">
-          <div className="absolute left-8 top-2 h-20 w-28 rotate-6 rounded-xl bg-white/80 shadow-lg ring-1 ring-violet-100" />
-          <div className="absolute left-20 top-0 h-24 w-32 -rotate-3 overflow-hidden rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-xl">
+          <div className="absolute left-8 top-2 h-20 w-28 rotate-6 rounded-xl bg-white/80 shadow-lg ring-1 ring-[#eadfd6]" />
+          <div className="absolute left-20 top-0 h-24 w-32 -rotate-3 overflow-hidden rounded-xl bg-gradient-to-br from-[#e85a2a] to-[#cf4f24] shadow-xl">
             <div className="mt-6 h-10 bg-white/20" />
           </div>
           <div className="absolute left-0 top-6 h-16 w-24 -rotate-6 rounded-xl bg-white shadow-md ring-1 ring-slate-100" />

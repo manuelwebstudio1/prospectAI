@@ -31,7 +31,7 @@ export function MarketingFooter() {
     <footer className="mt-8 text-[#5c564f]">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-4">
         <div>
-          <BrandLogo mark="bloom" />
+          <BrandLogo />
           <p className="mt-4 max-w-xs text-sm leading-6">
             Find businesses. Build websites. Win clients. Built for developers and agencies across Ghana and beyond.
           </p>
