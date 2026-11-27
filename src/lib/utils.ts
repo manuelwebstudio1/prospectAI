@@ -32,6 +32,22 @@ export function greetingForHour(hour: number): string {
   return "Good evening";
 }
 
+/** Ghana (Africa/Accra) wall-clock hour, 0–23. */
+export function hourInGhana(date = new Date()): number {
+  const hour = Number(
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Africa/Accra",
+      hour: "numeric",
+      hourCycle: "h23",
+    }).formatToParts(date).find((part) => part.type === "hour")?.value ?? "0",
+  );
+  return Number.isFinite(hour) ? hour : 0;
+}
+
+export function greetingNow(date = new Date()): string {
+  return greetingForHour(hourInGhana(date));
+}
+
 export function initialsFromName(name: string | null | undefined): string {
   if (!name?.trim()) return "PA";
   const parts = name.trim().split(/\s+/).slice(0, 2);

@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
-import { greetingForHour } from "@/lib/utils";
+import { greetingNow } from "@/lib/utils";
 
 export function WelcomeBanner({ name, isEmpty }: { name: string; isEmpty?: boolean }) {
   const [greeting, setGreeting] = useState("Welcome");
 
   useEffect(() => {
-    setGreeting(greetingForHour(new Date().getHours()));
+    setGreeting(greetingNow());
   }, []);
 
   return (
