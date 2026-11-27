@@ -89,6 +89,7 @@ Last updated: 24 Nov 2026
 | `supabase/migrations/00006_write_policies.sql` | Backend write RLS | Applied |
 | `supabase/migrations/00007_autonomous_agent.sql` | Agent jobs | Applied |
 | `supabase/migrations/00008_mcp_connector.sql` | Grok Bot MCP OAuth + logs | Applied |
+| `supabase/migrations/00009_mcp_idempotency.sql` | MCP idempotency keys | Applied |
 
 ## Testing status
 

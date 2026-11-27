@@ -48,7 +48,7 @@ export async function handleJsonRpc(message: Rpc, user: CurrentUser, clientId: s
       tools: MCP_TOOLS.map((tool) => ({
         name: tool.name,
         description: tool.description,
-        inputSchema: tool.inputSchema,
+        inputSchema: { type: "object", additionalProperties: true },
       })),
     });
   }

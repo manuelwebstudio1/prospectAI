@@ -54,6 +54,13 @@ type McpLocal = {
   }>;
   mcpToolLogs: McpToolLog[];
   mcpEvents: McpConnectionEvent[];
+  mcpIdempotency: Array<{
+    organization_id: string;
+    tool_name: string;
+    key_hash: string;
+    result: string;
+    created_at: string;
+  }>;
 };
 
 declare module "@/lib/dev/local-workspace" {
@@ -75,6 +82,7 @@ function localSlice(workspace: Awaited<ReturnType<typeof readLocalWorkspace>>): 
   extra.mcpTokens ??= [];
   extra.mcpToolLogs ??= [];
   extra.mcpEvents ??= [];
+  extra.mcpIdempotency ??= [];
   return extra as McpLocal;
 }
 
@@ -320,6 +328,54 @@ export async function listToolLogs(limit = 20): Promise<McpToolLog[]> {
     error: (row.error as string | null) ?? null,
     created_at: String(row.created_at),
   }));
+}
+
+export async function getIdempotentResult(organizationId: string, toolName: string, key: string) {
+  const key_hash = sha256Hex(key);
+  if (!isSupabaseConfigured()) {
+    const workspace = await readLocalWorkspace();
+    return localSlice(workspace).mcpIdempotency.find(
+      (item) => item.organization_id === organizationId && item.tool_name === toolName && item.key_hash === key_hash,
+    )?.result ?? null;
+  }
+  const supabase = await db();
+  const { data } = await supabase!
+    .from("mcp_idempotency")
+    .select("result")
+    .eq("organization_id", organizationId)
+    .eq("tool_name", toolName)
+    .eq("key_hash", key_hash)
+    .maybeSingle();
+  if (!data) return null;
+  return typeof data.result === "string" ? data.result : JSON.stringify(data.result);
+}
+
+export async function saveIdempotentResult(organizationId: string, toolName: string, key: string, result: string) {
+  const key_hash = sha256Hex(key);
+  const created_at = nowIso();
+  if (!isSupabaseConfigured()) {
+    await mutateLocalWorkspace((workspace) => {
+      const slice = localSlice(workspace);
+      const index = slice.mcpIdempotency.findIndex(
+        (item) => item.organization_id === organizationId && item.tool_name === toolName && item.key_hash === key_hash,
+      );
+      const row = { organization_id: organizationId, tool_name: toolName, key_hash, result, created_at };
+      if (index >= 0) slice.mcpIdempotency[index] = row;
+      else slice.mcpIdempotency.push(row);
+    });
+    return;
+  }
+  const supabase = await db();
+  let payload: unknown = result;
+  try {
+    payload = JSON.parse(result);
+  } catch {
+    payload = { text: result };
+  }
+  await supabase?.from("mcp_idempotency").upsert(
+    { organization_id: organizationId, tool_name: toolName, key_hash, result: payload },
+    { onConflict: "organization_id,tool_name,key_hash" },
+  );
 }
 
 export async function listConnectionEvents(limit = 20): Promise<McpConnectionEvent[]> {

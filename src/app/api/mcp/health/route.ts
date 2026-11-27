@@ -14,6 +14,7 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     transport: "streamable-http",
+    sdk: "@modelcontextprotocol/sdk",
     resource: mcpResourceUrl(),
     authorization: `${env.appUrl.replace(/\/$/, "")}/oauth/authorize`,
     grokBotVerified: false,

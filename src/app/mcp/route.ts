@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { runWithActor } from "@/lib/auth/actor-context";
 import { authenticateMcpRequest, wwwAuthenticateHeader } from "@/lib/mcp/oauth";
-import { CORS_HEADERS, handleJsonRpc } from "@/lib/mcp/protocol";
+import { CORS_HEADERS } from "@/lib/mcp/protocol";
+import { handleMcpSdkRequest } from "@/lib/mcp/sdk-server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,7 +15,7 @@ function withCors(response: NextResponse) {
 
 function unauthorized() {
   const response = NextResponse.json(
-    { error: "Unauthorized", hint: "Complete OAuth for the ProspectAI MCP connector. This is not an xAI API key." },
+    { error: "Unauthorized", hint: "Complete ProspectAI OAuth for this MCP connector. This is not an xAI API key." },
     { status: 401 },
   );
   response.headers.set("WWW-Authenticate", wwwAuthenticateHeader());
@@ -25,27 +26,20 @@ export async function OPTIONS() {
   return withCors(new NextResponse(null, { status: 204 }));
 }
 
-export async function GET() {
-  return unauthorized();
+async function handle(request: Request) {
+  const auth = await authenticateMcpRequest(request);
+  if (!auth) return unauthorized();
+  return runWithActor({ user: auth.user, privileged: true }, () => handleMcpSdkRequest(request, auth.user, auth.clientId));
 }
 
-export async function DELETE() {
-  return unauthorized();
+export async function GET(request: Request) {
+  return handle(request);
 }
 
 export async function POST(request: Request) {
-  const auth = await authenticateMcpRequest(request);
-  if (!auth) return unauthorized();
+  return handle(request);
+}
 
-  const payload = (await request.json().catch(() => null)) as
-    | { jsonrpc?: string; id?: string | number | null; method?: string; params?: Record<string, unknown> }
-    | Array<unknown>
-    | null;
-  if (!payload || Array.isArray(payload)) {
-    return withCors(NextResponse.json({ jsonrpc: "2.0", error: { code: -32600, message: "Invalid JSON-RPC batch." } }, { status: 400 }));
-  }
-
-  const result = await runWithActor({ user: auth.user, privileged: true }, () => handleJsonRpc(payload, auth.user, auth.clientId));
-  if (!result) return withCors(new NextResponse(null, { status: 202 }));
-  return withCors(NextResponse.json(result));
+export async function DELETE(request: Request) {
+  return handle(request);
 }

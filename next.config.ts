@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Authenticated SaaS surfaces are user-specific; keep rendering dynamic.
   cacheComponents: false,
+  serverExternalPackages: ["@modelcontextprotocol/sdk"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
