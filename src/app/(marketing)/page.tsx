@@ -53,7 +53,7 @@ export default async function LandingPage() {
           {steps.map((step, index) => (
             <article
               key={step.title}
-              className="marketing-card min-h-[280px] p-8 transition duration-300 ease-out hover:-translate-y-3 hover:scale-[1.03] hover:shadow-[0_20px_44px_rgba(80,50,30,0.14)]"
+              className="marketing-card min-h-[280px] p-8"
             >
               <p className="font-display text-3xl text-[#e85a2a]">{String(index + 1).padStart(2, "0")}</p>
               <h2 className="mt-5 text-lg font-semibold tracking-tight text-[#1c1917]">{step.title}</h2>

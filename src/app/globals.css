@@ -163,4 +163,12 @@ body {
   border-radius: 1.35rem;
   box-shadow: 0 1px 2px rgba(80, 50, 30, 0.04), 0 18px 40px rgba(80, 50, 30, 0.05);
   backdrop-filter: blur(8px);
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+@media (hover: hover) {
+  .marketing-card:hover {
+    transform: translateY(-0.75rem) scale(1.03);
+    box-shadow: 0 20px 44px rgba(80, 50, 30, 0.14);
+  }
 }
