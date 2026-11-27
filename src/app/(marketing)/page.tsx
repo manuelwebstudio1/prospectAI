@@ -48,13 +48,16 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      <section className="px-4 pb-8 sm:px-6">
+      <section className="px-4 pb-10 pt-2 sm:px-6">
         <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-2 xl:grid-cols-4">
           {steps.map((step, index) => (
-            <article key={step.title} className="marketing-card p-6">
+            <article
+              key={step.title}
+              className="marketing-card min-h-[280px] p-8 transition duration-300 ease-out hover:-translate-y-3 hover:scale-[1.03] hover:shadow-[0_20px_44px_rgba(80,50,30,0.14)]"
+            >
               <p className="font-display text-3xl text-[#e85a2a]">{String(index + 1).padStart(2, "0")}</p>
-              <h2 className="mt-4 text-lg font-semibold tracking-tight text-[#1c1917]">{step.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-[#6f6a64]">{step.body}</p>
+              <h2 className="mt-5 text-lg font-semibold tracking-tight text-[#1c1917]">{step.title}</h2>
+              <p className="mt-3 text-sm leading-6 text-[#6f6a64]">{step.body}</p>
             </article>
           ))}
         </div>
