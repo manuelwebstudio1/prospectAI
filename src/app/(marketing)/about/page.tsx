@@ -31,13 +31,13 @@ export default function AboutPage() {
       </div>
 
       <div className="mt-16 grid gap-6 lg:grid-cols-2">
-        <article className="marketing-card p-8 sm:p-10">
+        <article className="marketing-card relative z-0 p-8 transition duration-300 ease-out hover:z-10 hover:-translate-y-4 hover:scale-[1.04] hover:shadow-xl sm:p-10">
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#e85a2a]">Our Mission</p>
           <p className="mt-4 text-lg leading-9 text-[#3f3a36] sm:text-xl sm:leading-10">
             Our mission is to empower web developers, freelancers and digital agencies with intelligent tools that simplify client acquisition, eliminate repetitive prospecting tasks and create more opportunities for business growth.
           </p>
         </article>
-        <article className="marketing-card p-8 sm:p-10">
+        <article className="marketing-card relative z-0 p-8 transition duration-300 ease-out hover:z-10 hover:-translate-y-4 hover:scale-[1.04] hover:shadow-xl sm:p-10">
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#e85a2a]">Our Vision</p>
           <p className="mt-4 text-lg leading-9 text-[#3f3a36] sm:text-xl sm:leading-10">
             We envision a world where every developer, regardless of their experience, location or resources, has access to intelligent technology that helps them discover opportunities, showcase their capabilities and build sustainable businesses.

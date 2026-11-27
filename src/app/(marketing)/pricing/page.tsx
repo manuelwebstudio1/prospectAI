@@ -23,7 +23,7 @@ export default async function PricingPage() {
         {plans.map((plan) => (
           <article
             key={plan.slug}
-            className={`marketing-card flex flex-col p-6 ${plan.highlighted ? "ring-1 ring-[#e85a2a]/35" : ""}`}
+            className={`marketing-card relative z-0 flex flex-col p-6 transition duration-300 ease-out hover:z-10 hover:-translate-y-4 hover:scale-[1.04] hover:shadow-xl ${plan.highlighted ? "ring-1 ring-[#e85a2a]/35" : ""}`}
           >
             {plan.highlighted ? (
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#e85a2a]">Most popular</p>

@@ -53,7 +53,7 @@ export default async function LandingPage() {
           {steps.map((step, index) => (
             <article
               key={step.title}
-              className="marketing-card min-h-[280px] p-8"
+              className="marketing-card relative z-0 min-h-[280px] p-8 transition duration-300 ease-out hover:z-10 hover:-translate-y-4 hover:scale-[1.04] hover:shadow-xl"
             >
               <p className="font-display text-3xl text-[#e85a2a]">{String(index + 1).padStart(2, "0")}</p>
               <h2 className="mt-5 text-lg font-semibold tracking-tight text-[#1c1917]">{step.title}</h2>
@@ -75,7 +75,7 @@ export default async function LandingPage() {
           </div>
           <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {features.map((feature) => (
-              <article key={feature.title} className="marketing-card p-6">
+              <article key={feature.title} className="marketing-card relative z-0 p-6 transition duration-300 ease-out hover:z-10 hover:-translate-y-4 hover:scale-[1.04] hover:shadow-xl">
                 <feature.icon className="mb-4 h-5 w-5 text-[#e85a2a]" />
                 <h3 className="font-semibold text-[#1c1917]">{feature.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-[#6f6a64]">{feature.body}</p>
@@ -99,7 +99,7 @@ export default async function LandingPage() {
             {plans.map((plan) => (
               <article
                 key={plan.slug}
-                className={`marketing-card p-6 ${plan.highlighted ? "ring-1 ring-[#e85a2a]/35" : ""}`}
+                className={`marketing-card relative z-0 p-6 transition duration-300 ease-out hover:z-10 hover:-translate-y-4 hover:scale-[1.04] hover:shadow-xl ${plan.highlighted ? "ring-1 ring-[#e85a2a]/35" : ""}`}
               >
                 <p className="text-sm font-medium text-[#e85a2a]">{plan.name}</p>
                 <p className="mt-2 font-display text-4xl text-[#1c1917]">{formatCurrency(plan.monthlyGhs)}</p>
@@ -121,7 +121,7 @@ export default async function LandingPage() {
       </section>
 
       <section className="px-4 pb-8 sm:px-6">
-        <div className="marketing-card mx-auto flex max-w-4xl flex-col items-center px-8 py-16 text-center">
+        <div className="marketing-card relative z-0 mx-auto flex max-w-4xl flex-col items-center px-8 py-16 text-center transition duration-300 ease-out hover:z-10 hover:-translate-y-4 hover:scale-[1.04] hover:shadow-xl">
           <h2 className="font-display text-3xl tracking-[-0.03em] text-[#1c1917] sm:text-4xl">
             Ready to find your next <em className="italic">client</em>?
           </h2>

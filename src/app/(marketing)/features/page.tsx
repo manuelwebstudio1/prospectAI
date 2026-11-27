@@ -47,7 +47,7 @@ export default function FeaturesPage() {
       />
       <div className="mt-14 grid gap-6 lg:grid-cols-3">
         {groups.map((group) => (
-          <article key={group.title} className="marketing-card p-6">
+          <article key={group.title} className="marketing-card relative z-0 p-6 transition duration-300 ease-out hover:z-10 hover:-translate-y-4 hover:scale-[1.04] hover:shadow-xl">
             <h2 className="font-display text-2xl text-[#1c1917]">{group.title}</h2>
             <ul className="mt-4 space-y-3 text-sm leading-6 text-[#3f3a36]">
               {group.items.map((item) => (

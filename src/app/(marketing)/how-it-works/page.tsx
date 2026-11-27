@@ -27,7 +27,7 @@ export default function HowItWorksPage() {
       />
       <ol className="mt-14 space-y-5">
         {flow.map((step, index) => (
-          <li key={step.title} className="marketing-card p-6">
+          <li key={step.title} className="marketing-card relative z-0 p-6 transition duration-300 ease-out hover:z-10 hover:-translate-y-4 hover:scale-[1.04] hover:shadow-xl">
             <p className="font-display text-2xl text-[#e85a2a]">{String(index + 1).padStart(2, "0")}</p>
             <h2 className="mt-2 text-xl font-semibold text-[#1c1917]">{step.title}</h2>
             <p className="mt-2 text-sm leading-6 text-[#6f6a64]">{step.body}</p>
