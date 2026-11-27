@@ -10,6 +10,13 @@ import { ensureCustomerWorkspace } from "@/services/workspace/provision";
 
 export type ActionState = { error?: string; success?: string } | null;
 
+function safeOAuthNext(raw: unknown) {
+  const value = String(raw ?? "");
+  if (!value.startsWith("/oauth/authorize")) return null;
+  if (value.includes("://") || value.startsWith("//")) return null;
+  return value;
+}
+
 export async function loginAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const parsed = loginSchema.safeParse({
     email: formData.get("email"),
@@ -27,7 +34,7 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
       fullName: parsed.data.email.split("@")[0].replace(/\./g, " "),
       platformRole: role,
     });
-    redirect(isPlatformAdmin({ platformRole: role }) ? "/admin" : "/dashboard");
+    redirect(safeOAuthNext(formData.get("next")) ?? (isPlatformAdmin({ platformRole: role }) ? "/admin" : "/dashboard"));
   }
 
   const supabase = await createSupabaseServerClient();
@@ -47,6 +54,8 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
     .eq("id", user.id)
     .maybeSingle();
   const role = applyPlatformRole(profile?.platform_role, profile?.email ?? parsed.data.email);
+  const oauthNext = safeOAuthNext(formData.get("next"));
+  if (oauthNext) redirect(oauthNext);
   if (isPlatformAdmin({ platformRole: role })) redirect("/admin");
 
   const provisioned = await ensureCustomerWorkspace({

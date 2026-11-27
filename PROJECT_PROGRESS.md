@@ -66,8 +66,9 @@ Last updated: 24 Nov 2026
 
 | Variable | Used for | Status |
 | --- | --- | --- |
-| `GROK_API_KEY` | Default AI | Not configured |
-| `OPENAI_API_KEY` | Alternate AI | Not configured |
+| `OPENAI_API_KEY` | Optional HTTP copy adapter | Not configured |
+| `XAI_API_ENABLED` / `XAI_API_KEY` | Optional xAI HTTP adapter (not Grok Bot) | Disabled / not required |
+| MCP `/mcp` | Grok Bot custom connector | Server implemented; Bot not verified connected |
 | `GOOGLE_PLACES_API_KEY` | Live discovery | Not configured |
 | `NEXT_PUBLIC_SUPABASE_URL` | Persistence | Configured locally; app reads live Supabase |
 | `RESEND_API_KEY` | Live email | Not configured |
@@ -86,6 +87,8 @@ Last updated: 24 Nov 2026
 | `supabase/migrations/00004_moolre_billing.sql` | Moolre billing columns | Applied |
 | `supabase/migrations/00005_admin_console.sql` | Admin write policies | Applied |
 | `supabase/migrations/00006_write_policies.sql` | Backend write RLS | Applied |
+| `supabase/migrations/00007_autonomous_agent.sql` | Agent jobs | Applied |
+| `supabase/migrations/00008_mcp_connector.sql` | Grok Bot MCP OAuth + logs | Applied |
 
 ## Testing status
 

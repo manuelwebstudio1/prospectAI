@@ -500,6 +500,35 @@ export async function deleteCampaign(organizationId: string, campaignId: string)
   await supabase?.from("campaigns").delete().eq("id", campaignId).eq("organization_id", organizationId);
 }
 
+export async function saveInspection(inspection: InspectionRecord) {
+  if (!isSupabaseConfigured()) {
+    await mutateLocalWorkspace((workspace) => {
+      workspace.inspections.unshift(inspection);
+    });
+    return;
+  }
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) throw new Error("Database is not configured.");
+  const { error } = await supabase.from("website_inspections").insert({
+    id: inspection.id,
+    business_id: inspection.business_id,
+    organization_id: inspection.organization_id,
+    url: inspection.url,
+    verification_status: inspection.verification_status,
+    http_status: inspection.http_status,
+    is_reachable: inspection.is_reachable,
+    redirect_url: inspection.redirect_url,
+    mobile_score: inspection.mobile_score,
+    performance_score: inspection.performance_score,
+    seo_score: inspection.seo_score,
+    evidence: inspection.evidence,
+    evidence_source: inspection.evidence_source,
+    confidence: inspection.confidence,
+    inspected_at: inspection.inspected_at,
+  });
+  if (error) throw new Error(error.message);
+}
+
 export async function getLatestInspection(organizationId: string, businessId: string): Promise<InspectionRecord | null> {
   if (!isSupabaseConfigured()) {
     const workspace = await readLocalWorkspace();

@@ -24,12 +24,17 @@ export const env = {
   },
 
   ai: {
-    defaultProvider: (read("AI_DEFAULT_PROVIDER") ?? "grok") as "grok" | "openai",
-    grokKey: read("GROK_API_KEY"),
-    grokBaseUrl: read("GROK_API_BASE_URL") ?? "https://api.x.ai/v1",
-    grokModel: read("GROK_MODEL") ?? "grok-4-fast-reasoning",
+    defaultProvider: (read("AI_DEFAULT_PROVIDER") ?? "openai") as "openai" | "xai",
     openaiKey: read("OPENAI_API_KEY"),
     openaiModel: read("OPENAI_MODEL") ?? "gpt-4.1-mini",
+    xaiEnabled: read("XAI_API_ENABLED") === "true",
+    xaiKey: read("XAI_API_KEY") ?? (read("XAI_API_ENABLED") === "true" ? read("GROK_API_KEY") : undefined),
+    xaiBaseUrl: read("XAI_API_BASE_URL") ?? "https://api.x.ai/v1",
+    xaiModel: read("XAI_MODEL") ?? "grok-4-fast-reasoning",
+  },
+  mcp: {
+    oauthClientId: read("MCP_OAUTH_CLIENT_ID"),
+    oauthClientSecret: read("MCP_OAUTH_CLIENT_SECRET"),
   },
 
   googlePlacesKey: read("GOOGLE_PLACES_API_KEY"),
@@ -65,8 +70,8 @@ export function isSupabaseConfigured(): boolean {
 export function integrationStatus() {
   return {
     supabase: isSupabaseConfigured(),
-    grok: Boolean(env.ai.grokKey),
     openai: Boolean(env.ai.openaiKey),
+    xaiAdapter: Boolean(env.ai.xaiEnabled && env.ai.xaiKey),
     googlePlaces: Boolean(env.googlePlacesKey),
     resend: Boolean(env.resendKey),
     whatsapp: Boolean(env.whatsapp.accessToken && env.whatsapp.phoneNumberId),

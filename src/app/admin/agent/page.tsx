@@ -3,14 +3,17 @@ import { getAiStatus } from "@/lib/ai/provider";
 import { integrationStatus } from "@/lib/env";
 import { adminListAgentJobs } from "@/services/agent/store";
 import { listAiUsage } from "@/services/admin/store";
+import { getGrokBotConnectorStatus } from "@/lib/mcp/status";
+import { GrokBotStatus } from "@/components/admin/grok-bot-status";
 
 export const metadata: Metadata = { title: "Admin AI agent" };
 
 export default async function AdminAgentPage() {
-  const [jobs, usage, integrations] = await Promise.all([
+  const [jobs, usage, integrations, grokBot] = await Promise.all([
     adminListAgentJobs(),
     listAiUsage(),
     Promise.resolve(integrationStatus()),
+    getGrokBotConnectorStatus(),
   ]);
   const ai = getAiStatus();
   const counts = {
@@ -50,16 +53,18 @@ export default async function AdminAgentPage() {
         ))}
       </div>
 
+      <GrokBotStatus status={grokBot} />
+
       <section className="surface-card p-5 space-y-3">
-        <h2 className="font-semibold">AI provider status</h2>
+        <h2 className="font-semibold">Optional HTTP model adapters</h2>
         <p className="text-sm">
-          Default provider: <span className="font-medium">{ai.provider}</span>
-          {ai.configured ? ` · ${ai.model}` : " · not configured"}
+          Active adapter: <span className="font-medium">{ai.provider}</span>
+          {ai.configured ? ` · ${ai.model}` : " · none (records-only compilation)"}
         </p>
         <p className="text-sm text-muted-foreground">
-          Grok programmatic access is {integrations.grok ? "configured via GROK_API_KEY" : "not configured"}. The on-site
-          chat widget is not an xAI API connection. OpenAI fallback is {integrations.openai ? "configured" : "disconnected"}.
-          Unattended worker (CRON_SECRET): {integrations.workerCron ? "authorized" : "not set"}.
+          These adapters are independent of Grok Bot. OpenAI: {integrations.openai ? "configured" : "not set"}. Optional
+          xAI HTTP adapter: {integrations.xaiAdapter ? "enabled" : "disabled"}. Unattended worker:{" "}
+          {integrations.workerCron ? "authorized" : "not set"}.
         </p>
       </section>
 

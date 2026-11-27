@@ -5,8 +5,8 @@ export const metadata: Metadata = { title: "Integrations" };
 
 const labels: Record<string, string> = {
   supabase: "Supabase",
-  grok: "Grok (xAI)",
-  openai: "OpenAI",
+  openai: "Optional OpenAI HTTP adapter",
+  xaiAdapter: "Optional xAI HTTP adapter",
   googlePlaces: "Google Places",
   resend: "Resend email",
   whatsapp: "WhatsApp Cloud API",

@@ -1,9 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { env, isSupabaseConfigured } from "@/lib/env";
+import { getActor } from "@/lib/auth/actor-context";
 
 export async function createSupabaseServerClient() {
   if (!isSupabaseConfigured()) return null;
+
+  const actor = getActor();
+  if (actor?.privileged) {
+    return createSupabaseServiceClient();
+  }
 
   const cookieStore = await cookies();
 

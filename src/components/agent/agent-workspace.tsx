@@ -169,9 +169,9 @@ export function AgentWorkspace({
           <p className="mt-1 font-semibold">{placesConfigured ? "Google Places connected" : "Sample directory only"}</p>
         </div>
         <div className="surface-card px-4 py-3 text-sm">
-          <p className="text-muted-foreground">AI provider</p>
+          <p className="text-muted-foreground">Copy / research adapter</p>
           <p className="mt-1 font-semibold">
-            {aiConfigured ? `${aiProvider} configured` : `${aiProvider} not configured — structured fallbacks only`}
+            {aiConfigured ? `${aiProvider} HTTP adapter` : "Records-only fallbacks (Grok Bot uses MCP, not an API key)"}
           </p>
         </div>
         <div className="surface-card px-4 py-3 text-sm">

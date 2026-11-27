@@ -17,13 +17,14 @@ function DevNotice() {
   );
 }
 
-export function LoginForm() {
+export function LoginForm({ next }: { next?: string }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(loginAction, null);
   return (
     <div>
       <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
       <p className="mt-1 text-sm text-muted-foreground">Log in to your ProspectAI workspace.</p>
       <form action={action} className="mt-6 space-y-4">
+        {next ? <input type="hidden" name="next" value={next} /> : null}
         <DevNotice />
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>

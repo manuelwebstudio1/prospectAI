@@ -23,7 +23,7 @@ export function assertAgentsReady(): { ready: boolean; reason?: string } {
   if (!status.configured) {
     return {
       ready: false,
-      reason: `No AI provider is configured. Add GROK_API_KEY or OPENAI_API_KEY to enable ${status.provider}. Records-only compilation remains available.`,
+      reason: `No optional HTTP model adapter is enabled. Records-only compilation remains available. Grok Bot connects through the MCP connector, not an xAI API key.`,
     };
   }
   return { ready: true };

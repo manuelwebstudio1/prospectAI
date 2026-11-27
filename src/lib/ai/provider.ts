@@ -2,11 +2,11 @@ import { z } from "zod";
 import { env, integrationStatus } from "@/lib/env";
 
 /**
- * Provider-independent AI layer.
- * Agents must call this module rather than a vendor SDK directly.
- * Requests fail closed when no API key is configured.
+ * Optional HTTP model adapters. These are independent of Grok Bot.
+ * Grok Bot connects through the MCP connector at /mcp — never through this module.
+ * The xAI adapter stays disabled unless XAI_API_ENABLED=true AND a key is set.
  */
-export type AiProviderName = "grok" | "openai";
+export type AiProviderName = "openai" | "xai" | "none";
 
 export type AiCompletionRequest = {
   agent: string;
@@ -25,7 +25,7 @@ export type AiCompletionResult<T> =
   | {
       ok: true;
       data: T;
-      provider: AiProviderName;
+      provider: Exclude<AiProviderName, "none">;
       model: string;
       usage: AiUsage;
     }
@@ -43,21 +43,8 @@ function activeProvider(): {
   model: string;
   baseUrl: string;
 } {
-  if (env.ai.defaultProvider === "openai" && env.ai.openaiKey) {
-    return {
-      name: "openai",
-      key: env.ai.openaiKey,
-      model: env.ai.openaiModel,
-      baseUrl: "https://api.openai.com/v1",
-    };
-  }
-  if (env.ai.grokKey) {
-    return {
-      name: "grok",
-      key: env.ai.grokKey,
-      model: env.ai.grokModel,
-      baseUrl: env.ai.grokBaseUrl,
-    };
+  if (env.ai.defaultProvider === "xai" && env.ai.xaiEnabled && env.ai.xaiKey) {
+    return { name: "xai", key: env.ai.xaiKey, model: env.ai.xaiModel, baseUrl: env.ai.xaiBaseUrl };
   }
   if (env.ai.openaiKey) {
     return {
@@ -67,11 +54,14 @@ function activeProvider(): {
       baseUrl: "https://api.openai.com/v1",
     };
   }
+  if (env.ai.xaiEnabled && env.ai.xaiKey) {
+    return { name: "xai", key: env.ai.xaiKey, model: env.ai.xaiModel, baseUrl: env.ai.xaiBaseUrl };
+  }
   return {
-    name: env.ai.defaultProvider === "openai" ? "openai" : "grok",
+    name: "none",
     key: undefined,
-    model: env.ai.defaultProvider === "openai" ? env.ai.openaiModel : env.ai.grokModel,
-    baseUrl: env.ai.defaultProvider === "openai" ? "https://api.openai.com/v1" : env.ai.grokBaseUrl,
+    model: env.ai.openaiModel,
+    baseUrl: "",
   };
 }
 
@@ -81,8 +71,8 @@ export function getAiStatus() {
   return {
     provider: provider.name,
     configured: Boolean(provider.key),
-    grok: status.grok,
     openai: status.openai,
+    xaiAdapter: status.xaiAdapter,
     model: provider.model,
   };
 }
@@ -93,14 +83,12 @@ function extractJson(content: string): unknown {
   return JSON.parse(fenced?.[1] ?? trimmed);
 }
 
-async function requestOnce<T>(
-  request: AiCompletionRequest,
-): Promise<AiCompletionResult<T>> {
+async function requestOnce<T>(request: AiCompletionRequest): Promise<AiCompletionResult<T>> {
   const provider = activeProvider();
-  if (!provider.key) {
+  if (!provider.key || provider.name === "none") {
     return {
       ok: false,
-      error: `AI provider "${provider.name}" is not configured. Set GROK_API_KEY or OPENAI_API_KEY to activate ${request.agent}.`,
+      error: `No optional HTTP model adapter is enabled. ${request.agent} will use records-only output. Grok Bot does not use this adapter — connect it at /mcp.`,
       code: "not_configured",
       provider: provider.name,
       model: provider.model,
@@ -199,12 +187,9 @@ async function requestOnce<T>(
   }
 }
 
-export async function completeStructured<T>(
-  request: AiCompletionRequest,
-): Promise<AiCompletionResult<T>> {
+export async function completeStructured<T>(request: AiCompletionRequest): Promise<AiCompletionResult<T>> {
   const first = await requestOnce<T>(request);
   if (first.ok || first.code !== "invalid_json") return first;
-
   return requestOnce<T>({
     ...request,
     user: `${request.user}\n\nYour previous JSON failed validation: ${first.error}\nReturn corrected JSON only.`,

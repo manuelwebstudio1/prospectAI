@@ -19,7 +19,7 @@ const groups = [
       "Website inspector with confidence scores and evidence",
       "Business researcher that refuses to invent facts",
       "Website architect that proposes industry-specific structures",
-      "Provider-independent AI layer (Grok default, OpenAI optional)",
+      "Grok Bot connects through a ProspectAI MCP connector — not an xAI API key",
     ],
   },
   {

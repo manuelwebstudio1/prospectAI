@@ -16,7 +16,7 @@ export default async function AgentPage() {
     <AgentWorkspace
       placesConfigured={integrations.googlePlaces}
       aiConfigured={ai.configured}
-      aiProvider={ai.provider}
+      aiProvider={ai.provider === "none" ? "records-only" : ai.provider}
       workerConfigured={integrations.workerCron}
     />
   );
