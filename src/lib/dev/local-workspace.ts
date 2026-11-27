@@ -19,6 +19,13 @@ import type {
   WebhookEventRecord,
 } from "@/services/workspace/types";
 import type { DemoWebsiteRecord } from "@/services/demos/types";
+import type {
+  AgentActivityRecord,
+  AgentJobRecord,
+  AgentTaskRecord,
+  DeploymentRecord,
+  OpportunityScoreRecord,
+} from "@/services/agent/types";
 
 export type CreditBucket = { remaining: number; allocated: number };
 
@@ -49,6 +56,11 @@ export type LocalWorkspace = {
   suspendedUserIds: string[];
   platformSettings: PlatformSettings;
   planOverrides: Partial<Record<string, PlanOverride>>;
+  agentJobs: AgentJobRecord[];
+  agentTasks: AgentTaskRecord[];
+  agentActivity: AgentActivityRecord[];
+  opportunityScores: OpportunityScoreRecord[];
+  deployments: DeploymentRecord[];
 };
 
 const DATA_DIR = path.join(process.cwd(), ".data");
@@ -81,6 +93,11 @@ const empty = (): LocalWorkspace => ({
   suspendedUserIds: [],
   platformSettings: { trial_days: 14, default_plan: "starter" },
   planOverrides: {},
+  agentJobs: [],
+  agentTasks: [],
+  agentActivity: [],
+  opportunityScores: [],
+  deployments: [],
 });
 
 let chain: Promise<unknown> = Promise.resolve();
@@ -128,6 +145,11 @@ async function readWorkspace(): Promise<LocalWorkspace> {
       suspendedUserIds: parsed.suspendedUserIds ?? [],
       platformSettings: parsed.platformSettings ?? { trial_days: 14, default_plan: "starter" },
       planOverrides: parsed.planOverrides ?? {},
+      agentJobs: parsed.agentJobs ?? [],
+      agentTasks: parsed.agentTasks ?? [],
+      agentActivity: parsed.agentActivity ?? [],
+      opportunityScores: parsed.opportunityScores ?? [],
+      deployments: parsed.deployments ?? [],
     };
   } catch {
     return empty();

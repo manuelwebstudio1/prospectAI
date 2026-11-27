@@ -13,6 +13,7 @@ const labels: Record<string, string> = {
   moolre: "Moolre (Ghana payments)",
   stripe: "Stripe (optional)",
   trigger: "Trigger.dev",
+  workerCron: "Unattended job worker (CRON_SECRET)",
 };
 
 export default function AdminIntegrationsPage() {

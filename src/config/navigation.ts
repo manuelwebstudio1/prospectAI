@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
+  Bot,
   Building2,
   CreditCard,
   LayoutDashboard,
@@ -35,6 +36,7 @@ export const workspaceNav: NavSection[] = [
     title: "Workspace",
     items: [
       { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+      { href: "/dashboard/agent", label: "AI Agent", icon: Bot },
       { href: "/dashboard/discovery", label: "Discover Businesses", icon: Search },
       { href: "/dashboard/campaigns", label: "Campaigns", icon: Target },
       { href: "/dashboard/leads", label: "All Leads", icon: Building2 },
@@ -63,6 +65,7 @@ export const adminNav: NavItem[] = [
   { href: "/admin/subscriptions", label: "Subscriptions", icon: CreditCard },
   { href: "/admin/plans", label: "Plans", icon: CreditCard },
   { href: "/admin/jobs", label: "Background Jobs", icon: Target },
+  { href: "/admin/agent", label: "AI Agent", icon: Bot },
   { href: "/admin/usage", label: "AI usage", icon: Sparkles },
   { href: "/admin/integrations", label: "Integrations", icon: Plug },
   { href: "/admin/logs", label: "System logs", icon: ScanSearch },
@@ -70,6 +73,12 @@ export const adminNav: NavItem[] = [
 ];
 
 export const quickActions = [
+  {
+    href: "/dashboard/agent",
+    label: "Run AI Agent",
+    description: "Give a natural-language acquisition instruction",
+    icon: Bot,
+  },
   {
     href: "/dashboard/discovery",
     label: "Discover Businesses",

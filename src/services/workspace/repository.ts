@@ -375,6 +375,29 @@ export async function consumeDiscoveryCredit(organizationId: string): Promise<bo
   return consumeCredit(organizationId, "discovery");
 }
 
+export async function refundCredit(
+  organizationId: string,
+  type: "discovery" | "research" | "website_generation" | "outreach",
+): Promise<void> {
+  if (!isSupabaseConfigured()) {
+    await mutateLocalWorkspace((workspace) => {
+      const bucket = workspace.credits[type];
+      if (bucket.allocated === -1) return;
+      bucket.remaining += 1;
+    });
+    return;
+  }
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return;
+  const current = await getCreditBalance(organizationId, type);
+  if (current.allocated === -1) return;
+  await supabase
+    .from("credit_balances")
+    .update({ remaining: current.remaining + 1 })
+    .eq("organization_id", organizationId)
+    .eq("credit_type", type);
+}
+
 export async function updateCampaignStatus(
   organizationId: string,
   campaignId: string,

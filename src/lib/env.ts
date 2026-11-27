@@ -55,6 +55,7 @@ export const env = {
   stripeSecret: read("STRIPE_SECRET_KEY"),
   stripePublic: read("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"),
   triggerSecret: read("TRIGGER_SECRET_KEY"),
+  cronSecret: read("CRON_SECRET"),
 };
 
 export function isSupabaseConfigured(): boolean {
@@ -72,5 +73,6 @@ export function integrationStatus() {
     moolre: Boolean(env.moolre?.apiUser && env.moolre?.publicKey && env.moolre?.accountNumber),
     stripe: Boolean(env.stripeSecret),
     trigger: Boolean(env.triggerSecret),
+    workerCron: Boolean(env.cronSecret),
   };
 }
