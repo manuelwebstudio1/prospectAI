@@ -8,8 +8,27 @@ function read(name: string): string | undefined {
   return value.trim();
 }
 
+function isLocalHostUrl(value: string) {
+  try {
+    const host = new URL(value.includes("://") ? value : `https://${value}`).hostname;
+    return host === "localhost" || host === "127.0.0.1";
+  } catch {
+    return /localhost|127\.0\.0\.1/i.test(value);
+  }
+}
+
+function resolveAppUrl() {
+  const explicit = read("NEXT_PUBLIC_APP_URL");
+  if (explicit && !isLocalHostUrl(explicit)) return explicit.replace(/\/$/, "");
+  const vercelHost = read("VERCEL_PROJECT_PRODUCTION_URL") ?? read("VERCEL_URL");
+  if (vercelHost && !isLocalHostUrl(vercelHost)) {
+    return `https://${vercelHost.replace(/^https?:\/\//, "").replace(/\/$/, "")}`;
+  }
+  return (explicit ?? "http://localhost:3000").replace(/\/$/, "");
+}
+
 export const env = {
-  appUrl: read("NEXT_PUBLIC_APP_URL") ?? "http://localhost:3000",
+  appUrl: resolveAppUrl(),
   appName: read("NEXT_PUBLIC_APP_NAME") ?? "ProspectAI",
   isProduction: process.env.NODE_ENV === "production",
   isDevelopment: process.env.NODE_ENV !== "production",
