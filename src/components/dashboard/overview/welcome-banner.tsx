@@ -1,16 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { greetingNow } from "@/lib/utils";
 
 export function WelcomeBanner({ name, isEmpty }: { name: string; isEmpty?: boolean }) {
-  const [greeting, setGreeting] = useState("Welcome");
-
-  useEffect(() => {
-    setGreeting(greetingNow());
-  }, []);
+  const greeting = greetingNow();
 
   return (
     <section className="relative overflow-hidden rounded-[1.4rem] bg-gradient-to-r from-[#f8e6dc] via-[#f6f1eb] to-[#f3ebe3] p-6 sm:p-7">

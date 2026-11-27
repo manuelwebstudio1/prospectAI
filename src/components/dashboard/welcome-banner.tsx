@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { greetingForHour } from "@/lib/utils";
+import { greetingNow } from "@/lib/utils";
 
 export function WelcomeBanner({ name }: { name: string }) {
-  const hour = new Date().getHours();
+  const greeting = greetingNow();
   return (
     <section className="relative overflow-hidden rounded-[1.4rem] bg-gradient-to-r from-[#eef0ff] via-[#f4f0ff] to-[#ece9ff] px-6 py-6 sm:px-8">
       <div className="relative z-10 max-w-xl">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-[28px]">
-          {greetingForHour(hour)}, {name}{" "}
+          {greeting}, {name}{" "}
           <span aria-hidden>👋</span>
         </h1>
         <p className="mt-1 text-sm text-slate-500">

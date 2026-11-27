@@ -32,16 +32,9 @@ export function greetingForHour(hour: number): string {
   return "Good evening";
 }
 
-/** Ghana (Africa/Accra) wall-clock hour, 0–23. */
+/** Ghana is GMT year-round, so Accra hour is UTC hour. */
 export function hourInGhana(date = new Date()): number {
-  const hour = Number(
-    new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Africa/Accra",
-      hour: "numeric",
-      hourCycle: "h23",
-    }).formatToParts(date).find((part) => part.type === "hour")?.value ?? "0",
-  );
-  return Number.isFinite(hour) ? hour : 0;
+  return date.getUTCHours();
 }
 
 export function greetingNow(date = new Date()): string {
