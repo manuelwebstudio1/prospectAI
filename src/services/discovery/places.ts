@@ -36,17 +36,8 @@ export async function huntBusinesses(input: HunterInput): Promise<DiscoverySourc
     };
   }
 
-  try {
-    const hits = await searchPlacesNew(env.googlePlacesKey, query, limit);
-    return { mode: "places", query, hits };
-  } catch (newError) {
-    const hits = await searchPlacesLegacy(env.googlePlacesKey, query, limit);
-    if (!hits.length) {
-      const message = newError instanceof Error ? newError.message : "Places API request failed.";
-      throw new Error(message);
-    }
-    return { mode: "places", query, hits };
-  }
+  const hits = await searchPlacesNew(env.googlePlacesKey, query, limit);
+  return { mode: "places", query, hits };
 }
 
 async function searchPlacesNew(key: string, query: string, limit: number): Promise<PlaceHit[]> {
@@ -70,8 +61,7 @@ async function searchPlacesNew(key: string, query: string, limit: number): Promi
     });
 
     if (!response.ok) {
-      const body = await response.text();
-      throw new Error(`Google Places (New) error ${response.status}: ${body.slice(0, 240)}`);
+      throw placesNewError(response.status, await response.text());
     }
 
     const json = (await response.json()) as {
@@ -114,77 +104,15 @@ async function searchPlacesNew(key: string, query: string, limit: number): Promi
   return hits;
 }
 
-async function searchPlacesLegacy(key: string, query: string, limit: number): Promise<PlaceHit[]> {
-  const hits: PlaceHit[] = [];
-  let pageToken: string | undefined;
-
-  while (hits.length < limit) {
-    const url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json");
-    url.searchParams.set("query", query);
-    url.searchParams.set("key", key);
-    if (pageToken) url.searchParams.set("pagetoken", pageToken);
-
-    const response = await fetch(url);
-    const json = (await response.json()) as {
-      status: string;
-      error_message?: string;
-      results?: Array<{
-        place_id?: string;
-        name?: string;
-        formatted_address?: string;
-        geometry?: { location?: { lat?: number; lng?: number } };
-        types?: string[];
-      }>;
-      next_page_token?: string;
-    };
-
-    if (json.status !== "OK" && json.status !== "ZERO_RESULTS") {
-      throw new Error(`Google Places error ${json.status}: ${json.error_message ?? "request failed"}`);
-    }
-
-    for (const place of json.results ?? []) {
-      if (!place.name) continue;
-      const details = place.place_id ? await fetchPlaceDetailsLegacy(key, place.place_id) : null;
-      hits.push({
-        name: place.name,
-        address: place.formatted_address ?? null,
-        city: null,
-        region: null,
-        country: null,
-        phone: details?.phone ?? null,
-        websiteUri: details?.website ?? null,
-        latitude: place.geometry?.location?.lat ?? null,
-        longitude: place.geometry?.location?.lng ?? null,
-        placeId: place.place_id ?? null,
-        types: place.types ?? [],
-        source: "google_places",
-      });
-      if (hits.length >= limit) break;
-    }
-
-    if (!json.next_page_token || hits.length >= limit) break;
-    pageToken = json.next_page_token;
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+function placesNewError(status: number, body: string) {
+  let detail = body.slice(0, 280);
+  try {
+    const parsed = JSON.parse(body) as { error?: { message?: string; status?: string } };
+    detail = parsed.error?.message ?? parsed.error?.status ?? detail;
+  } catch {
+    // Keep the raw body when Google does not return JSON.
   }
-
-  return hits;
-}
-
-async function fetchPlaceDetailsLegacy(
-  key: string,
-  placeId: string,
-): Promise<{ website: string | null; phone: string | null } | null> {
-  const url = new URL("https://maps.googleapis.com/maps/api/place/details/json");
-  url.searchParams.set("place_id", placeId);
-  url.searchParams.set("fields", "website,formatted_phone_number,international_phone_number");
-  url.searchParams.set("key", key);
-  const response = await fetch(url);
-  if (!response.ok) return null;
-  const json = (await response.json()) as {
-    result?: { website?: string; formatted_phone_number?: string; international_phone_number?: string };
-  };
-  return {
-    website: json.result?.website ?? null,
-    phone: json.result?.formatted_phone_number ?? json.result?.international_phone_number ?? null,
-  };
+  return new Error(
+    `Google Places (New) error ${status}: ${detail}. Enable "Places API (New)" for this Google Cloud project, turn on billing, and allow Places API (New) on the key. Do not restrict the key to HTTP referrers — ProspectAI calls Google from the server.`,
+  );
 }
