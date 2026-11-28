@@ -10,21 +10,32 @@ const copySchema = z.object({
   cta: z.string().min(2).max(40),
 });
 
+function articleFor(value: string) {
+  return /^[aeiou]/i.test(value.trim()) ? "an" : "a";
+}
+
+function industryPhrase(industry: string | null) {
+  if (!industry) return "local business";
+  return industry.replace(/companies$/i, "").trim().toLowerCase() || "local business";
+}
+
 function deterministicCopy(report: ResearchReport): DemoContent {
-  const locationBit = report.location ? ` in ${report.location}` : "";
-  const industryBit = report.industry ? report.industry.toLowerCase() : "local";
-  const subhead = report.location || report.industry
-    ? `${report.businessName} is a ${industryBit} business${locationBit}. This page is an unofficial demonstration assembled from verified records only.`
-    : `${report.businessName} — an unofficial ProspectAI demonstration. Unverified details are omitted.`;
+  const industry = industryPhrase(report.industry);
+  const city = report.location?.replace(/,\s*GH$/i, "").trim() ?? null;
+  const subhead = city
+    ? `${report.businessName} is ${articleFor(industry)} ${industry} business in ${city}.`
+    : `${report.businessName} is ${articleFor(industry)} ${industry} business.`;
   const about = report.description
-    ? `${report.description} Fields that were not verified are left blank rather than invented.`
-    : `${report.businessName}${locationBit ? ` is listed${locationBit}` : ""}. A fuller company story has not been verified, so it is not shown here.`;
+    ? report.description
+    : city
+      ? `${report.businessName} is listed in ${city}. Only public records are shown on this preview.`
+      : `${report.businessName}. Only public records are shown on this preview.`;
 
   return {
     headline: report.businessName,
     subhead,
     about,
-    cta: report.publicContacts.phone ? "Call or enquire" : "Enquire",
+    cta: report.publicContacts.phone ? "Request a quote" : "Enquire",
     location: report.location,
     phone: report.publicContacts.phone,
     email: report.publicContacts.email,

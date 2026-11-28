@@ -160,7 +160,7 @@ export function getPreviewOverview(userName: string): DashboardOverview {
     plan: {
       planName: "Professional",
       planSlug: "professional",
-      monthlyGhs: 350,
+      monthlyGhs: 150,
       renewsOn: "Feb 26, 2026",
       creditsUsed: 4280,
       creditsTotal: 10000,
@@ -229,7 +229,7 @@ export function emptyOverview(userName: string): DashboardOverview {
     plan: {
       planName: "Starter",
       planSlug: "starter",
-      monthlyGhs: 150,
+      monthlyGhs: 50,
       renewsOn: null,
       creditsUsed: 0,
       creditsTotal: 250,

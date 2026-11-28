@@ -6,7 +6,7 @@ export function grokBotReply(message: string): string {
   }
 
   if (/(price|pricing|cost|plan|pay|cedi|ghs|moolre)/.test(text)) {
-    return "Plans are billed in Ghana Cedis through Moolre.\n\n• Starter — GH₵150/month (250 discoveries, 10 demos)\n• Professional — GH₵350/month (higher limits, unlimited demos)\n• Agency — GH₵700/month (team features and priority processing)\n\nYou can start a 14-day trial from Create workspace. Open /pricing for the full list.";
+    return "Plans are billed in Ghana Cedis through Moolre.\n\n• Starter — GH₵50/month (250 discoveries, 10 demos)\n• Professional — GH₵150/month (higher limits, unlimited demos)\n• Agency — GH₵350/month (team features and priority processing)\n\nYou can start a 14-day trial from Create workspace. Open /pricing for the full list.";
   }
 
   if (/(how it works|how does|workflow|steps|campaign)/.test(text)) {

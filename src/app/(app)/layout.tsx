@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isPlatformAdmin } from "@/lib/auth/roles";
-import { getDashboardOverview } from "@/services/dashboard/get-overview";
+import { getSidebarPlan } from "@/services/dashboard/get-overview";
 import { isUserSuspended } from "@/services/admin/store";
 import { AppSidebar } from "@/components/layouts/app-sidebar";
 import { AppHeader } from "@/components/layouts/app-header";
@@ -23,17 +23,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     );
   }
 
-  const overview = await getDashboardOverview(user);
+  const plan = await getSidebarPlan(user);
 
   return (
     <div className="flex min-h-screen bg-background">
       <div className="hidden lg:block">
         <div className="sticky top-0 h-screen">
-          <AppSidebar user={user} plan={overview.plan} />
+          <AppSidebar user={user} plan={plan} />
         </div>
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
-        <AppHeader user={user} plan={overview.plan} />
+        <AppHeader user={user} plan={plan} />
         <main className="flex-1 px-4 py-5 sm:px-6">{children}</main>
       </div>
     </div>

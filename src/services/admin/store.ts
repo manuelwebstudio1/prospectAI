@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createSupabaseServerClient, createSupabaseServiceClient } from "@/lib/supabase/server";
 import { mutateLocalWorkspace, readLocalWorkspace } from "@/lib/dev/local-workspace";
@@ -254,7 +255,7 @@ export async function setUserPlatformRole(userId: string, role: AdminUserRecord[
   if (error) throw new Error(error.message);
 }
 
-export async function isUserSuspended(userId: string): Promise<boolean> {
+export const isUserSuspended = cache(async (userId: string): Promise<boolean> => {
   if (!isSupabaseConfigured()) {
     const workspace = await readLocalWorkspace();
     return (workspace.suspendedUserIds ?? []).includes(userId);
@@ -266,7 +267,7 @@ export async function isUserSuspended(userId: string): Promise<boolean> {
     .eq("id", userId)
     .maybeSingle()) ?? { data: null };
   return Boolean(data?.suspended_at);
-}
+});
 
 export async function listAdminSubscriptions() {
   if (!isSupabaseConfigured()) {

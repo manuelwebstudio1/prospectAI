@@ -3,6 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CopyPreviewButton } from "@/components/demos/copy-preview-button";
+import { env } from "@/lib/env";
 import { getCurrentUser } from "@/lib/auth/session";
 import { listDemos } from "@/services/workspace/repository";
 
@@ -49,7 +51,10 @@ export default async function DemosPage() {
                 {demo.content.copyMode === "ai" ? <Badge>AI copy</Badge> : <Badge variant="secondary">Deterministic copy</Badge>}
               </div>
               <p className="mt-3 text-xs text-muted-foreground">Expires {demo.expires_at.slice(0, 10)}</p>
-              <div className="mt-4 flex gap-2">
+              <p className="mt-2 break-all text-[11px] text-muted-foreground">
+                {`${env.appUrl.replace(/\/$/, "")}${demo.preview_path}`}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
                 <Button asChild size="sm">
                   <Link href={`/dashboard/demos/${demo.id}`}>Manage</Link>
                 </Button>
@@ -58,6 +63,7 @@ export default async function DemosPage() {
                     Open preview
                   </Link>
                 </Button>
+                <CopyPreviewButton path={demo.preview_path} />
               </div>
             </article>
           ))}

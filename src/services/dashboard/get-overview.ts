@@ -1,9 +1,19 @@
 import { env } from "@/lib/env";
 import { emptyOverview, getPreviewOverview } from "@/lib/dev/preview-overview";
-import type { CurrentUser, DashboardOverview, WebsiteStatus } from "@/types";
+import type { CurrentUser, DashboardOverview, PlanUsage, WebsiteStatus } from "@/types";
 import { getCredits, listBusinesses, listCampaigns, listDemos, listLeads } from "@/services/workspace/repository";
 import { getSubscription } from "@/services/workspace/billing-store";
 import { planUsageFromSubscription } from "@/services/billing/plan-usage";
+
+export async function getSidebarPlan(user: CurrentUser): Promise<PlanUsage> {
+  const fallback = emptyOverview(user.fullName.split(" ")[0] ?? user.fullName).plan;
+  if (!user.organizationId) return fallback;
+  const [credits, subscription] = await Promise.all([
+    getCredits(user.organizationId),
+    getSubscription(user.organizationId),
+  ]);
+  return planUsageFromSubscription(subscription, credits);
+}
 
 export async function getDashboardOverview(user: CurrentUser): Promise<DashboardOverview> {
   const firstName = user.fullName.split(" ")[0] ?? user.fullName;

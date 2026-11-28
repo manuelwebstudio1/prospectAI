@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -5,7 +6,7 @@ import { applyPlatformRole, isPlatformAdmin } from "@/lib/auth/roles";
 import { getDevSession } from "@/lib/auth/dev-session";
 import type { CurrentUser } from "@/types";
 
-export async function getCurrentUser(): Promise<CurrentUser | null> {
+export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   if (!isSupabaseConfigured()) {
     return getDevSession();
   }
@@ -48,7 +49,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     ),
     isSample: false,
   };
-}
+});
 
 export async function requireUser(): Promise<CurrentUser> {
   const user = await getCurrentUser();

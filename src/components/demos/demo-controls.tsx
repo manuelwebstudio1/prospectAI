@@ -8,6 +8,7 @@ import {
   updateDemoTemplateAction,
   type DemoActionState,
 } from "@/app/(app)/dashboard/demos/actions";
+import { CopyPreviewButton } from "@/components/demos/copy-preview-button";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { DEMO_TEMPLATES, type DemoWebsiteRecord } from "@/services/demos/types";
@@ -90,19 +91,11 @@ export function DemoControls({ demo }: { demo: DemoWebsiteRecord }) {
 function CopyLink({ path }: { path: string }) {
   return (
     <div className="space-y-2">
-      <Label>Public preview</Label>
+      <Label>Client demo link</Label>
       <p className="break-all rounded-xl border bg-muted/40 px-3 py-2 text-xs">{path}</p>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={async () => {
-          await navigator.clipboard.writeText(`${window.location.origin}${path}`);
-        }}
-      >
-        Copy preview URL
-      </Button>
+      <CopyPreviewButton path={path} />
       <p className="text-xs text-muted-foreground">
-        Custom subdomains are not enabled. Recipients use this path. The preview always shows an unofficial disclaimer.
+        Send this public URL to the client. It expires after 30 days and always shows an unofficial disclaimer.
       </p>
     </div>
   );
